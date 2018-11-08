@@ -21,15 +21,13 @@ open class KoustPlayerView: UIViewController {
     private var _orientations   = UIInterfaceOrientationMask.landscape
     private var playerWidth     = UIScreen.main.bounds.width
     private var playerHeight    = UIScreen.main.bounds.height
-    
+    private var interval        = CMTime(seconds: 0.1,preferredTimescale: CMTimeScale(NSEC_PER_SEC))
     
     private var playAndPauseBtn = UIButton()
     private var rewindBtn       = UIButton()
     private var slider          = UISlider()
     private var remainingTime   = UILabel()
-
     
-
 
     
     func presentAVPlayer(){
@@ -37,14 +35,11 @@ open class KoustPlayerView: UIViewController {
         playerVC.player                             = player
         playerVC.showsPlaybackControls              = false
         playerVC.entersFullScreenWhenPlaybackBegins = true
-        
-        
         UIApplication.topViewController()?.present(playerVC, animated: true){
             
-            self.preriodicTimeObsever()
             self.bottomContainer()
             self.playState()
-            
+//            self.preriodicTimeObsever()
         }
         
         
@@ -75,12 +70,13 @@ open class KoustPlayerView: UIViewController {
         
         let sliderWith  = playerWidth - 90 - 160
         
-        self.slider.frame               = CGRect(x: 140, y: y, width: sliderWith, height: 25)
-        self.slider.backgroundColor     = UIColor.clear
-        self.slider.thumbTintColor      = UIColor.red
-        self.slider.tintColor           = UIColor.white
+        self.slider.frame                   = CGRect(x: 140, y: y, width: sliderWith, height: 25)
+        self.slider.backgroundColor         = UIColor.clear
+        self.slider.thumbTintColor          = UIColor.red
+        self.slider.minimumTrackTintColor   = UIColor.red
+        self.slider.tintColor               = UIColor.white
         self.slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
-        self.slider.addTarget(self, action: #selector(sliderDidEnd), for: .editingDidEnd)
+        self.slider.addTarget(self, action: #selector(sliderTouchUpOutside), for: .touchUpInside)
         
         self.playerVC.view.addSubview(slider)
         
@@ -102,14 +98,34 @@ open class KoustPlayerView: UIViewController {
             self.playState()
     }
     
-    @objc func sliderValueChanged(){
+    @objc func sliderValueChanged(_ sender:UISlider){
             self.pause()
-            self.playerVC.player?.seek(to: CMTimeGetSeconds(self.slider.value.))
-            print(self.slider.value)
+        
+        let duration : CMTime = player?.currentItem!.duration ?? CMTime()
+        let seconds : Float64 = CMTimeGetSeconds(duration) * Double(sender.value)
+  
+        hmsFrom(seconds: Int(seconds)) { hours, minutes, seconds in
+            
+            let hours   = getStringFrom(seconds: hours)
+            let minutes = getStringFrom(seconds: minutes)
+            let seconds = getStringFrom(seconds: seconds)
+            
+            
+            self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+        }
     }
     
-    @objc func sliderDidEnd(){
-            self.play()
+    @objc func sliderTouchUpOutside(_ sender: UISlider){
+        let duration : CMTime            = player?.currentItem!.duration ?? CMTime()
+        let newCurrentTime: TimeInterval = Double(sender.value) * CMTimeGetSeconds(duration)
+        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
+        interval                         = seekToTime
+
+        
+        
+        self.playerVC.player?.seek(to: seekToTime)
+        
+        self.play()
     }
     
     
@@ -146,8 +162,7 @@ open class KoustPlayerView: UIViewController {
 //            observer = nil
         }
         
-        let intervel : CMTime = CMTimeMake(value: 1, timescale: 10)
-        observer = player?.addPeriodicTimeObserver(forInterval: intervel, queue: DispatchQueue.main) { [weak self] time in
+        observer = player?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] time in
             
             
             self?.slider.maximumValue = Float(CGFloat(CMTimeGetSeconds(self?.playerVC.player?.currentItem?.duration ?? CMTime())))
@@ -168,7 +183,6 @@ open class KoustPlayerView: UIViewController {
             //this is the slider value update if you are using UISlider.
             self?.slider.setValue(Float(sliderValue), animated: true)
             
-            print(sliderValue)
             let playbackLikelyToKeepUp = self?.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
             if playbackLikelyToKeepUp == false{
                 
