@@ -17,6 +17,12 @@
 		FA570E862192CA9E0059708F /* KoustMoviewPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E852192CA9E0059708F /* KoustMoviewPlayerController.swift */; };
 		FA570E8D2192D55A0059708F /* KoustMPController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E8C2192D55A0059708F /* KoustMPController.swift */; };
 		FA570E8F219313B60059708F /* KoustLandscapeAVPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E8E219313B60059708F /* KoustLandscapeAVPlayerController.swift */; };
+		FAA6FC252194183F00B11E48 /* KoustPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA6FC242194183F00B11E48 /* KoustPlayerView.swift */; };
+		FAA6FC272194224D00B11E48 /* play-button.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA6FC262194224D00B11E48 /* play-button.png */; };
+		FAA6FC2A21944AC600B11E48 /* GeneralUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA6FC2921944AC600B11E48 /* GeneralUtility.swift */; };
+		FAA6FC2D21944F5200B11E48 /* KoustMoviePlayerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA6FC2C21944F5200B11E48 /* KoustMoviePlayerState.swift */; };
+		FAA6FC2F219458F300B11E48 /* rewind-button.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA6FC2E219458F200B11E48 /* rewind-button.png */; };
+		FAA6FC3121945D3400B11E48 /* pause-button.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA6FC3021945D3400B11E48 /* pause-button.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +59,12 @@
 		FA570E852192CA9E0059708F /* KoustMoviewPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustMoviewPlayerController.swift; sourceTree = "<group>"; };
 		FA570E8C2192D55A0059708F /* KoustMPController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustMPController.swift; sourceTree = "<group>"; };
 		FA570E8E219313B60059708F /* KoustLandscapeAVPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustLandscapeAVPlayerController.swift; sourceTree = "<group>"; };
+		FAA6FC242194183F00B11E48 /* KoustPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustPlayerView.swift; sourceTree = "<group>"; };
+		FAA6FC262194224D00B11E48 /* play-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play-button.png"; sourceTree = "<group>"; };
+		FAA6FC2921944AC600B11E48 /* GeneralUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GeneralUtility.swift; path = koustMoviePlayer/class/GeneralUtility.swift; sourceTree = SOURCE_ROOT; };
+		FAA6FC2C21944F5200B11E48 /* KoustMoviePlayerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustMoviePlayerState.swift; sourceTree = "<group>"; };
+		FAA6FC2E219458F200B11E48 /* rewind-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "rewind-button.png"; sourceTree = "<group>"; };
+		FAA6FC3021945D3400B11E48 /* pause-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause-button.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +149,9 @@
 		FA570E822192CA6E0059708F /* class */ = {
 			isa = PBXGroup;
 			children = (
+				FAA6FC2B21944E0C00B11E48 /* enum */,
+				FAA6FC2821944AB100B11E48 /* helper */,
+				FAA6FC232194181800B11E48 /* view */,
 				FA570E882192D2A70059708F /* assets */,
 				FA570E842192CA8D0059708F /* controller */,
 			);
@@ -170,6 +185,9 @@
 		FA570E882192D2A70059708F /* assets */ = {
 			isa = PBXGroup;
 			children = (
+				FAA6FC2E219458F200B11E48 /* rewind-button.png */,
+				FAA6FC3021945D3400B11E48 /* pause-button.png */,
+				FAA6FC262194224D00B11E48 /* play-button.png */,
 			);
 			path = assets;
 			sourceTree = "<group>";
@@ -180,6 +198,30 @@
 				FA570E8C2192D55A0059708F /* KoustMPController.swift */,
 			);
 			path = controller;
+			sourceTree = "<group>";
+		};
+		FAA6FC232194181800B11E48 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				FAA6FC242194183F00B11E48 /* KoustPlayerView.swift */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
+		FAA6FC2821944AB100B11E48 /* helper */ = {
+			isa = PBXGroup;
+			children = (
+				FAA6FC2921944AC600B11E48 /* GeneralUtility.swift */,
+			);
+			path = helper;
+			sourceTree = "<group>";
+		};
+		FAA6FC2B21944E0C00B11E48 /* enum */ = {
+			isa = PBXGroup;
+			children = (
+				FAA6FC2C21944F5200B11E48 /* KoustMoviePlayerState.swift */,
+			);
+			path = enum;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -287,7 +329,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA570E5F2192CA2D0059708F /* LaunchScreen.storyboard in Resources */,
+				FAA6FC272194224D00B11E48 /* play-button.png in Resources */,
+				FAA6FC2F219458F300B11E48 /* rewind-button.png in Resources */,
 				FA570E5C2192CA2D0059708F /* Assets.xcassets in Resources */,
+				FAA6FC3121945D3400B11E48 /* pause-button.png in Resources */,
 				FA570E5A2192CA2B0059708F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -313,6 +358,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAA6FC252194183F00B11E48 /* KoustPlayerView.swift in Sources */,
+				FAA6FC2A21944AC600B11E48 /* GeneralUtility.swift in Sources */,
+				FAA6FC2D21944F5200B11E48 /* KoustMoviePlayerState.swift in Sources */,
 				FA570E8F219313B60059708F /* KoustLandscapeAVPlayerController.swift in Sources */,
 				FA570E862192CA9E0059708F /* KoustMoviewPlayerController.swift in Sources */,
 				FA570E8D2192D55A0059708F /* KoustMPController.swift in Sources */,
