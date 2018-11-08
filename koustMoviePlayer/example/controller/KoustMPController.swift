@@ -10,21 +10,20 @@ import UIKit
 
 class KoustMPController: UIViewController {
 
+    let koustMPC = KoustMoviewPlayerController()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        koustMPC.videoURLS.append(URL(string: "http://techslides.com/demos/sample-videos/small.mp4")!)
+        //koustMPC.videoURLS.append(URL())
         // Do any additional setup after loading the view.
     }
     
 
-    /*
-    // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func playAction(_ sender: Any) {
+        koustMPC.show()
     }
-    */
-
+    
 }

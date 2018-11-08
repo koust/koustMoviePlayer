@@ -14,6 +14,9 @@
 		FA570E5F2192CA2D0059708F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA570E5D2192CA2D0059708F /* LaunchScreen.storyboard */; };
 		FA570E6A2192CA2D0059708F /* koustMoviePlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E692192CA2D0059708F /* koustMoviePlayerTests.swift */; };
 		FA570E752192CA2D0059708F /* koustMoviePlayerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E742192CA2D0059708F /* koustMoviePlayerUITests.swift */; };
+		FA570E862192CA9E0059708F /* KoustMoviewPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E852192CA9E0059708F /* KoustMoviewPlayerController.swift */; };
+		FA570E8D2192D55A0059708F /* KoustMPController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E8C2192D55A0059708F /* KoustMPController.swift */; };
+		FA570E8F219313B60059708F /* KoustLandscapeAVPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E8E219313B60059708F /* KoustLandscapeAVPlayerController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,9 @@
 		FA570E702192CA2D0059708F /* koustMoviePlayerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = koustMoviePlayerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA570E742192CA2D0059708F /* koustMoviePlayerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = koustMoviePlayerUITests.swift; sourceTree = "<group>"; };
 		FA570E762192CA2D0059708F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA570E852192CA9E0059708F /* KoustMoviewPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustMoviewPlayerController.swift; sourceTree = "<group>"; };
+		FA570E8C2192D55A0059708F /* KoustMPController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustMPController.swift; sourceTree = "<group>"; };
+		FA570E8E219313B60059708F /* KoustLandscapeAVPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustLandscapeAVPlayerController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +103,9 @@
 		FA570E532192CA2B0059708F /* koustMoviePlayer */ = {
 			isa = PBXGroup;
 			children = (
+				FA570E872192D2820059708F /* assets */,
+				FA570E832192CA780059708F /* example */,
+				FA570E822192CA6E0059708F /* class */,
 				FA570E542192CA2B0059708F /* AppDelegate.swift */,
 				FA570E562192CA2B0059708F /* ViewController.swift */,
 				FA570E582192CA2B0059708F /* Main.storyboard */,
@@ -123,6 +132,54 @@
 				FA570E762192CA2D0059708F /* Info.plist */,
 			);
 			path = koustMoviePlayerUITests;
+			sourceTree = "<group>";
+		};
+		FA570E822192CA6E0059708F /* class */ = {
+			isa = PBXGroup;
+			children = (
+				FA570E882192D2A70059708F /* assets */,
+				FA570E842192CA8D0059708F /* controller */,
+			);
+			path = class;
+			sourceTree = "<group>";
+		};
+		FA570E832192CA780059708F /* example */ = {
+			isa = PBXGroup;
+			children = (
+				FA570E8B2192D5420059708F /* controller */,
+			);
+			path = example;
+			sourceTree = "<group>";
+		};
+		FA570E842192CA8D0059708F /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				FA570E852192CA9E0059708F /* KoustMoviewPlayerController.swift */,
+				FA570E8E219313B60059708F /* KoustLandscapeAVPlayerController.swift */,
+			);
+			path = controller;
+			sourceTree = "<group>";
+		};
+		FA570E872192D2820059708F /* assets */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
+		FA570E882192D2A70059708F /* assets */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
+		FA570E8B2192D5420059708F /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				FA570E8C2192D55A0059708F /* KoustMPController.swift */,
+			);
+			path = controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,6 +313,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA570E8F219313B60059708F /* KoustLandscapeAVPlayerController.swift in Sources */,
+				FA570E862192CA9E0059708F /* KoustMoviewPlayerController.swift in Sources */,
+				FA570E8D2192D55A0059708F /* KoustMPController.swift in Sources */,
 				FA570E572192CA2B0059708F /* ViewController.swift in Sources */,
 				FA570E552192CA2B0059708F /* AppDelegate.swift in Sources */,
 			);
