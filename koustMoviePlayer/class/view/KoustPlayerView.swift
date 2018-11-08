@@ -74,6 +74,7 @@ open class KoustPlayerView: UIViewController {
         self.slider.backgroundColor         = UIColor.clear
         self.slider.thumbTintColor          = UIColor.red
         self.slider.minimumTrackTintColor   = UIColor.red
+        self.slider.maximumTrackTintColor   = UIColor.white
         self.slider.tintColor               = UIColor.white
         self.slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
         self.slider.addTarget(self, action: #selector(sliderTouchUpOutside), for: .touchUpInside)
