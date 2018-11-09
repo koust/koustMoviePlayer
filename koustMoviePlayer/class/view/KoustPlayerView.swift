@@ -34,7 +34,9 @@ open class KoustPlayerView: UIViewController {
         player                                      = AVPlayer(url:videoURLS.first!)
         playerVC.player                             = player
         playerVC.showsPlaybackControls              = false
-        playerVC.entersFullScreenWhenPlaybackBegins = true
+        
+        
+        self.bottomContainer()
         UIApplication.topViewController()?.present(playerVC, animated: true){
             
             self.bottomContainer()
@@ -51,23 +53,36 @@ open class KoustPlayerView: UIViewController {
         let y  = playerHeight - 35
         
         //Play And Pause Button
-        
-        self.playAndPauseBtn.frame  = CGRect(x: 30 , y: y, width: 25, height: 25)
-        self.playAndPauseBtn.addTarget(self, action: #selector(playAndPauseBtnAction), for: .touchUpInside)
-        
+        self.playAndPauseBtn.translatesAutoresizingMaskIntoConstraints  = false
+//        self.playAndPauseBtn.frame  = CGRect(x: 30 , y: y, width: 25, height: 25)
         
         self.playerVC.view.addSubview(playAndPauseBtn)
+        
+        self.playAndPauseBtn.leftAnchor.constraint(equalTo: self.playerVC.view.leftAnchor, constant: 25).isActive         = true
+        self.playAndPauseBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive    = true
+        self.playAndPauseBtn.widthAnchor.constraint(equalToConstant: 30).isActive                                         = true
+        self.playAndPauseBtn.heightAnchor.constraint(equalToConstant: 30).isActive                                        = true
+        
+        self.playAndPauseBtn.addTarget(self, action: #selector(playAndPauseBtnAction), for: .touchUpInside)
+        
         
         
         //Rewind Button
         
-        self.rewindBtn.frame       = CGRect(x: 90 , y: y , width:25 , height:25)
+        self.rewindBtn.translatesAutoresizingMaskIntoConstraints  = false
         self.rewindBtn.setImage(imageNamed("rewind-button"), for: .normal)
         
         self.playerVC.view.addSubview(rewindBtn)
         
+        self.rewindBtn.leftAnchor.constraint(equalTo: self.playAndPauseBtn.rightAnchor, constant:   25).isActive           = true
+        self.rewindBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
+        self.rewindBtn.widthAnchor.constraint(equalToConstant: 30).isActive                                                = true
+        self.rewindBtn.heightAnchor.constraint(equalToConstant: 30).isActive                                               = true
+        
+        
         //Slider
         
+        self.slider.translatesAutoresizingMaskIntoConstraints  = false
         let sliderWith  = playerWidth - 90 - 160
         
         self.slider.frame                   = CGRect(x: 140, y: y, width: sliderWith, height: 25)
@@ -83,6 +98,7 @@ open class KoustPlayerView: UIViewController {
         
         // remainingTime
         
+        self.remainingTime.translatesAutoresizingMaskIntoConstraints  = false
         let remaininTimeX               = sliderWith + 150
         
         self.remainingTime.frame        = CGRect(x: remaininTimeX, y: y, width: 95, height: 25)
