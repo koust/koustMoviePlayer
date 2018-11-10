@@ -31,14 +31,20 @@ open class KoustPlayerView: UIViewController {
     private var slider          = UISlider()
     private var remainingTime   = UILabel()
     private var skipBtn         = UIButton()
-
+    private var thumbView       = UIView()
+    private var thumbImage      = UIImageView()
+    private var thumbCurrent    = UILabel()
+    private var asset:AVURLAsset?
+    private var generator:AVAssetImageGenerator?
     
     func presentAVPlayer(){
         player                                      = AVPlayer(url:videoURLS.first!)
-        
         playerVC.player                             = player
         playerVC.showsPlaybackControls              = false
-        
+        asset                                       = AVURLAsset(url: videoURLS.first!)
+        generator                                   = AVAssetImageGenerator(asset: asset!)
+        generator?.appliesPreferredTrackTransform   = false
+
         
 //        self.bottomContainer()
         UIApplication.topViewController()?.present(playerVC, animated: true){
@@ -93,7 +99,8 @@ open class KoustPlayerView: UIViewController {
         self.slider.maximumTrackTintColor   = UIColor.white
         self.slider.tintColor               = UIColor.white
         self.slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
-        self.slider.addTarget(self, action: #selector(sliderTouchUpOutside), for: .touchUpInside)
+        self.slider.addTarget(self, action: #selector(sliderTouchUpInside), for: .touchUpInside)
+        self.slider.addTarget(self, action: #selector(sliderTouchUpOutside), for: .touchUpOutside)
         
         
         self.slider.leftAnchor.constraint(equalTo: self.rewindBtn.rightAnchor, constant:   25).isActive                 = true
@@ -152,8 +159,6 @@ open class KoustPlayerView: UIViewController {
         self.pause()
         self.slider.maximumValue        = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
         let seconds : Float64           = Double(sender.value)
-        
-        
         hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(seconds))) { hours, minutes, seconds in
             
             let hours   = getStringFrom(seconds: hours)
@@ -164,16 +169,24 @@ open class KoustPlayerView: UIViewController {
             }else{
                 self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
             }
+            
+            self.createThumbView(currentThumbImage:self.getThumbImage(seconds:Double(sender.value))!,currentTime: self.remainingTime.text!)
         }
     }
     
-    @objc func sliderTouchUpOutside(_ sender: UISlider){
+    @objc func sliderTouchUpInside(_ sender: UISlider){
         let newCurrentTime: TimeInterval = Double(sender.value)
         let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
 
 
         
         self.playerVC.player?.seek(to: seekToTime)
+        
+        UIView.animate(withDuration: 0.3, delay: 0, options: [], animations: {
+            self.thumbView.alpha      = 0
+        }, completion: { _ in
+            self.thumbView.removeFromSuperview()
+        })
         
         
         if newCurrentTime > (skipButtonDuration ?? 0 ) {
@@ -185,6 +198,30 @@ open class KoustPlayerView: UIViewController {
         self.play()
     }
     
+    
+    
+    @objc func sliderTouchUpOutside(_ sender:UISlider){
+        let newCurrentTime: TimeInterval = Double(sender.value)
+        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
+        
+        
+        self.playerVC.player?.seek(to: seekToTime)
+        
+        UIView.animate(withDuration: 0.3, delay: 0, options: [], animations: {
+            self.thumbView.alpha      = 0
+        }, completion: { _ in
+            self.thumbView.removeFromSuperview()
+        })
+        
+        
+        if newCurrentTime > (skipButtonDuration ?? 0 ) {
+            self.skipBtnAnimationHide()
+        }else{
+            self.skipBtnAnimationShow()
+        }
+        
+        self.play()
+    }
     
     @objc func setSkipDuration(){
         self.pause()
@@ -234,6 +271,44 @@ open class KoustPlayerView: UIViewController {
         })
     }
     
+    private func createThumbView(currentThumbImage:UIImage,currentTime:String){
+        self.thumbView.backgroundColor                              = UIColor.black
+        self.thumbView.alpha                                        = 1
+        self.playerVC.view.addSubview(thumbView)
+        
+        
+        self.thumbView.translatesAutoresizingMaskIntoConstraints    = false
+        
+        self.thumbView.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive    = true
+        self.thumbView.centerYAnchor.constraint(equalTo: self.playerVC.view.centerYAnchor, constant: 0).isActive    = true
+        self.thumbView.widthAnchor.constraint(equalToConstant: self.playerVC.view.frame.width / 2).isActive         = true
+        self.thumbView.heightAnchor.constraint(equalToConstant: self.playerVC.view.frame.height / 2).isActive       = true
+        
+        self.thumbCurrent.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.thumbCurrent.textAlignment     = .center
+        self.thumbCurrent.textColor         = UIColor.white
+        self.thumbCurrent.text              = currentTime
+        
+        self.thumbView.addSubview(thumbCurrent)
+        
+        self.thumbCurrent.leftAnchor.constraint(equalTo: self.thumbView.leftAnchor, constant: 0).isActive           = true
+        self.thumbCurrent.rightAnchor.constraint(equalTo: self.thumbView.rightAnchor, constant: 0).isActive         = true
+        self.thumbCurrent.bottomAnchor.constraint(equalTo: self.thumbView.bottomAnchor, constant: 0).isActive       = true
+        self.thumbCurrent.heightAnchor.constraint(equalToConstant: 30).isActive                                     = true
+        
+        self.thumbImage.translatesAutoresizingMaskIntoConstraints   = false
+        
+        self.thumbView.addSubview(thumbImage)
+        
+        self.thumbImage.image   = currentThumbImage
+        
+        self.thumbImage.leftAnchor.constraint(equalTo: self.thumbView.leftAnchor, constant: 0).isActive             = true
+        self.thumbImage.rightAnchor.constraint(equalTo: self.thumbView.rightAnchor, constant: 0).isActive           = true
+        self.thumbImage.topAnchor.constraint(equalTo: self.thumbView.topAnchor, constant: 0).isActive               = true
+        self.thumbImage.bottomAnchor.constraint(equalTo: self.thumbCurrent.topAnchor, constant: 0).isActive         = true
+        
+    }
     
     
     private func playState(){
@@ -258,6 +333,15 @@ open class KoustPlayerView: UIViewController {
         self.playerVC.player?.pause()
         self.playAndPauseBtn.setImage(imageNamed("play-button"), for: .normal)
         self.autoPlay   = .play
+    }
+    
+    private func getThumbImage(seconds:Double) -> UIImage? {
+        let timestamp = CMTime(seconds: seconds, preferredTimescale: 200)
+        if let imageRef = try? generator?.copyCGImage(at: timestamp, actualTime: nil) {
+            return UIImage(cgImage: imageRef!)
+        } else {
+            return nil
+        }
     }
     
     

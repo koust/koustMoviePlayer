@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVKit
 
 func imageNamed(_ name: String) -> UIImage {
     let cls = KoustPlayerView.self
@@ -34,4 +35,17 @@ func hmsFrom(seconds: Int, completion: @escaping (_ hours: Int, _ minutes: Int, 
 func getStringFrom(seconds: Int) -> String {
     
     return seconds < 10 ? "0\(seconds)" : "\(seconds)"
+}
+
+
+func videoPreviewUIImage(moviePath: URL,seconds:Double) -> UIImage? {
+    let asset = AVURLAsset(url: moviePath)
+    let generator = AVAssetImageGenerator(asset: asset)
+    generator.appliesPreferredTrackTransform = false
+    let timestamp = CMTime(seconds: seconds, preferredTimescale: 100)
+    if let imageRef = try? generator.copyCGImage(at: timestamp, actualTime: nil) {
+        return UIImage(cgImage: imageRef)
+    } else {
+        return nil
+    }
 }
