@@ -11,8 +11,11 @@ import AVKit
 
 open class KoustPlayerView: UIViewController {
     
-    public var videoURLS:[URL] = []
+    public var videoURLS:[URL]                = []
     public var autoPlay:KoustMoviePlayerState = .play
+    public var skipButtonActive               = false
+    public var skipButtonTitle                = "Skip"
+    public var skipButtonDuration:Double?
     
     
     private var observer:Any?
@@ -41,7 +44,7 @@ open class KoustPlayerView: UIViewController {
             
             self.bottomContainer()
             self.playState()
-//            self.preriodicTimeObsever()
+            self.preriodicTimeObsever()
         }
         
         
@@ -109,6 +112,33 @@ open class KoustPlayerView: UIViewController {
         self.remainingTime.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
         self.remainingTime.widthAnchor.constraint(equalToConstant: 90).isActive                                                = true
         self.remainingTime.heightAnchor.constraint(equalToConstant: 30).isActive                                               = true
+        
+        if self.skipButtonDuration  != nil && self.skipButtonActive == true {
+            self.skiptBtnView()
+        }
+        
+        
+    }
+    
+    private func skiptBtnView(){
+        
+        self.skipBtn.translatesAutoresizingMaskIntoConstraints      = false
+        self.skipBtn.setTitle(skipButtonTitle, for: .normal)
+        self.skipBtn.backgroundColor                                = UIColor.black
+        self.skipBtn.alpha                                          = 0.6
+        self.skipBtn.tintColor                                      = UIColor.white
+        self.skipBtn.layer.borderColor                              = UIColor.white.cgColor
+        self.skipBtn.layer.borderWidth                              = 1
+        self.skipBtn.contentMode                                    = .center
+        self.skipBtn.layer.cornerRadius                             = 3
+        self.skipBtn.addTarget(self, action: #selector(setSkipDuration), for: .touchUpInside)
+        
+        
+        self.playerVC.view.addSubview(skipBtn)
+        
+        self.skipBtn.rightAnchor.constraint(equalTo: self.playerVC.view.rightAnchor, constant: -25).isActive                   = true
+        self.skipBtn.bottomAnchor.constraint(equalTo: self.remainingTime.topAnchor, constant: -30).isActive                    = true
+        self.skipBtn.widthAnchor.constraint(equalToConstant: 60).isActive                                                      = true
     }
     
     
@@ -140,11 +170,60 @@ open class KoustPlayerView: UIViewController {
         let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
         interval                         = seekToTime
 
-        
+        if newCurrentTime > (skipButtonDuration ?? 0 ) {
+            self.skipBtnAnimationHide()
+        }else{
+            self.skipBtnAnimationShow()
+        }
         
         self.playerVC.player?.seek(to: seekToTime)
         
         self.play()
+    }
+    
+    
+    @objc func setSkipDuration(){
+        self.pause()
+        
+        
+        let newCurrentTime: TimeInterval = Double(self.skipButtonDuration ?? 0)
+        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
+        
+       
+        hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(newCurrentTime))) { hours, minutes, seconds in
+            let hours   = getStringFrom(seconds: hours)
+            let minutes = getStringFrom(seconds: minutes)
+            let seconds = getStringFrom(seconds: seconds)
+            self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+        }
+        
+        self.playerVC.player?.seek(to: seekToTime)
+        
+        self.play()
+        
+        
+        UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: {
+            self.skipBtn.alpha      = 0
+        }, completion: { _ in
+            self.skipBtn.isHidden   = true
+        })
+    }
+    
+    private func skipBtnAnimationShow(){
+        self.skipBtn.isHidden   = false
+        UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: {
+        self.skipBtn.alpha      = 0.6
+        }, completion: { _ in
+        })
+    }
+    
+    private func skipBtnAnimationHide(){
+        self.skipBtn.isHidden   = false
+        UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: {
+            self.skipBtn.alpha      = 0
+        }, completion: { _ in
+            self.skipBtn.isHidden   = true
+        })
     }
     
     
