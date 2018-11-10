@@ -27,7 +27,7 @@ open class KoustPlayerView: UIViewController {
     private var rewindBtn       = UIButton()
     private var slider          = UISlider()
     private var remainingTime   = UILabel()
-    
+    private var skipBtn         = UIButton()
 
     
     func presentAVPlayer(){
@@ -50,13 +50,15 @@ open class KoustPlayerView: UIViewController {
     
     private func bottomContainer(){
         
-        let y  = playerHeight - 35
         
         //Play And Pause Button
         self.playAndPauseBtn.translatesAutoresizingMaskIntoConstraints  = false
 //        self.playAndPauseBtn.frame  = CGRect(x: 30 , y: y, width: 25, height: 25)
         
         self.playerVC.view.addSubview(playAndPauseBtn)
+        self.playerVC.view.addSubview(rewindBtn)
+        self.playerVC.view.addSubview(slider)
+        self.playerVC.view.addSubview(remainingTime)
         
         self.playAndPauseBtn.leftAnchor.constraint(equalTo: self.playerVC.view.leftAnchor, constant: 25).isActive         = true
         self.playAndPauseBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive    = true
@@ -72,8 +74,6 @@ open class KoustPlayerView: UIViewController {
         self.rewindBtn.translatesAutoresizingMaskIntoConstraints  = false
         self.rewindBtn.setImage(imageNamed("rewind-button"), for: .normal)
         
-        self.playerVC.view.addSubview(rewindBtn)
-        
         self.rewindBtn.leftAnchor.constraint(equalTo: self.playAndPauseBtn.rightAnchor, constant:   25).isActive           = true
         self.rewindBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
         self.rewindBtn.widthAnchor.constraint(equalToConstant: 30).isActive                                                = true
@@ -83,9 +83,7 @@ open class KoustPlayerView: UIViewController {
         //Slider
         
         self.slider.translatesAutoresizingMaskIntoConstraints  = false
-        let sliderWith  = playerWidth - 90 - 160
         
-        self.slider.frame                   = CGRect(x: 140, y: y, width: sliderWith, height: 25)
         self.slider.backgroundColor         = UIColor.clear
         self.slider.thumbTintColor          = UIColor.red
         self.slider.minimumTrackTintColor   = UIColor.red
@@ -94,19 +92,23 @@ open class KoustPlayerView: UIViewController {
         self.slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
         self.slider.addTarget(self, action: #selector(sliderTouchUpOutside), for: .touchUpInside)
         
-        self.playerVC.view.addSubview(slider)
         
+        self.slider.leftAnchor.constraint(equalTo: self.rewindBtn.rightAnchor, constant:   25).isActive                 = true
+        self.slider.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
+        self.slider.heightAnchor.constraint(equalToConstant: 30).isActive                                               = true
+        self.slider.rightAnchor.constraint(equalTo: self.remainingTime.leftAnchor, constant:   -25).isActive            = true
         // remainingTime
         
         self.remainingTime.translatesAutoresizingMaskIntoConstraints  = false
-        let remaininTimeX               = sliderWith + 150
-        
-        self.remainingTime.frame        = CGRect(x: remaininTimeX, y: y, width: 95, height: 25)
+  
         self.remainingTime.text         = "00:00:00"
         self.remainingTime.textColor    = UIColor.white
         
         
-        self.playerVC.view.addSubview(remainingTime)
+        self.remainingTime.rightAnchor.constraint(equalTo: self.playerVC.view.rightAnchor, constant:   -5).isActive            = true
+        self.remainingTime.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
+        self.remainingTime.widthAnchor.constraint(equalToConstant: 90).isActive                                                = true
+        self.remainingTime.heightAnchor.constraint(equalToConstant: 30).isActive                                               = true
     }
     
     
@@ -121,7 +123,7 @@ open class KoustPlayerView: UIViewController {
         let duration : CMTime = player?.currentItem!.duration ?? CMTime()
         let seconds : Float64 = CMTimeGetSeconds(duration) * Double(sender.value)
   
-        hmsFrom(seconds: Int(seconds)) { hours, minutes, seconds in
+        hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(seconds))) { hours, minutes, seconds in
             
             let hours   = getStringFrom(seconds: hours)
             let minutes = getStringFrom(seconds: minutes)
