@@ -16,7 +16,7 @@ open class KoustPlayerView: UIViewController {
     public var skipButtonActive               = false
     public var skipButtonTitle                = "Skip"
     public var skipButtonDuration:Double?
-    
+    public var delegate:KoustPlayerProtocol?
     
     private var observer:Any?
     private var player:AVPlayer?
@@ -24,7 +24,7 @@ open class KoustPlayerView: UIViewController {
     private var _orientations   = UIInterfaceOrientationMask.landscape
     private var playerWidth     = UIScreen.main.bounds.width
     private var playerHeight    = UIScreen.main.bounds.height
-    private var interval        = CMTime(seconds: 0.1,preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+    private var interval        = CMTime(seconds: 28,preferredTimescale: CMTimeScale(NSEC_PER_SEC))
     
     private var playAndPauseBtn = UIButton()
     private var rewindBtn       = UIButton()
@@ -35,16 +35,16 @@ open class KoustPlayerView: UIViewController {
     
     func presentAVPlayer(){
         player                                      = AVPlayer(url:videoURLS.first!)
+        
         playerVC.player                             = player
         playerVC.showsPlaybackControls              = false
         
         
-        self.bottomContainer()
+//        self.bottomContainer()
         UIApplication.topViewController()?.present(playerVC, animated: true){
+                self.playState()
+                self.bottomContainer()
             
-            self.bottomContainer()
-            self.playState()
-            self.preriodicTimeObsever()
         }
         
         
@@ -65,8 +65,8 @@ open class KoustPlayerView: UIViewController {
         
         self.playAndPauseBtn.leftAnchor.constraint(equalTo: self.playerVC.view.leftAnchor, constant: 25).isActive         = true
         self.playAndPauseBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive    = true
-        self.playAndPauseBtn.widthAnchor.constraint(equalToConstant: 30).isActive                                         = true
-        self.playAndPauseBtn.heightAnchor.constraint(equalToConstant: 30).isActive                                        = true
+        self.playAndPauseBtn.widthAnchor.constraint(equalToConstant: 25).isActive                                         = true
+        self.playAndPauseBtn.heightAnchor.constraint(equalToConstant: 25).isActive                                        = true
         
         self.playAndPauseBtn.addTarget(self, action: #selector(playAndPauseBtnAction), for: .touchUpInside)
         
@@ -77,10 +77,10 @@ open class KoustPlayerView: UIViewController {
         self.rewindBtn.translatesAutoresizingMaskIntoConstraints  = false
         self.rewindBtn.setImage(imageNamed("rewind-button"), for: .normal)
         
-        self.rewindBtn.leftAnchor.constraint(equalTo: self.playAndPauseBtn.rightAnchor, constant:   25).isActive           = true
+        self.rewindBtn.leftAnchor.constraint(equalTo: self.playAndPauseBtn.rightAnchor, constant:   35).isActive           = true
         self.rewindBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
-        self.rewindBtn.widthAnchor.constraint(equalToConstant: 30).isActive                                                = true
-        self.rewindBtn.heightAnchor.constraint(equalToConstant: 30).isActive                                               = true
+        self.rewindBtn.widthAnchor.constraint(equalToConstant: 20).isActive                                                = true
+        self.rewindBtn.heightAnchor.constraint(equalToConstant: 25).isActive                                               = true
         
         
         //Slider
@@ -104,17 +104,18 @@ open class KoustPlayerView: UIViewController {
         
         self.remainingTime.translatesAutoresizingMaskIntoConstraints  = false
   
-        self.remainingTime.text         = "00:00:00"
+        self.remainingTime.text         = "00:00"
         self.remainingTime.textColor    = UIColor.white
         
         
         self.remainingTime.rightAnchor.constraint(equalTo: self.playerVC.view.rightAnchor, constant:   -5).isActive            = true
         self.remainingTime.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
-        self.remainingTime.widthAnchor.constraint(equalToConstant: 90).isActive                                                = true
+        self.remainingTime.widthAnchor.constraint(equalToConstant: 80).isActive                                                = true
         self.remainingTime.heightAnchor.constraint(equalToConstant: 30).isActive                                               = true
         
         if self.skipButtonDuration  != nil && self.skipButtonActive == true {
             self.skiptBtnView()
+            self.skipBtnAnimationShow()
         }
         
         
@@ -125,7 +126,7 @@ open class KoustPlayerView: UIViewController {
         self.skipBtn.translatesAutoresizingMaskIntoConstraints      = false
         self.skipBtn.setTitle(skipButtonTitle, for: .normal)
         self.skipBtn.backgroundColor                                = UIColor.black
-        self.skipBtn.alpha                                          = 0.6
+        self.skipBtn.alpha                                          = 0
         self.skipBtn.tintColor                                      = UIColor.white
         self.skipBtn.layer.borderColor                              = UIColor.white.cgColor
         self.skipBtn.layer.borderWidth                              = 1
@@ -148,35 +149,38 @@ open class KoustPlayerView: UIViewController {
     }
     
     @objc func sliderValueChanged(_ sender:UISlider){
-            self.pause()
+        self.pause()
+        self.slider.maximumValue        = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
+        let seconds : Float64           = Double(sender.value)
         
-        let duration : CMTime = player?.currentItem!.duration ?? CMTime()
-        let seconds : Float64 = CMTimeGetSeconds(duration) * Double(sender.value)
-  
+        
         hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(seconds))) { hours, minutes, seconds in
             
             let hours   = getStringFrom(seconds: hours)
             let minutes = getStringFrom(seconds: minutes)
             let seconds = getStringFrom(seconds: seconds)
-            
-            
-            self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+            if hours == "00"{
+                self.remainingTime.text = "\(minutes):\(seconds)"
+            }else{
+                self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+            }
         }
     }
     
     @objc func sliderTouchUpOutside(_ sender: UISlider){
-        let duration : CMTime            = player?.currentItem!.duration ?? CMTime()
-        let newCurrentTime: TimeInterval = Double(sender.value) * CMTimeGetSeconds(duration)
+        let newCurrentTime: TimeInterval = Double(sender.value)
         let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
-        interval                         = seekToTime
 
+
+        
+        self.playerVC.player?.seek(to: seekToTime)
+        
+        
         if newCurrentTime > (skipButtonDuration ?? 0 ) {
             self.skipBtnAnimationHide()
         }else{
             self.skipBtnAnimationShow()
         }
-        
-        self.playerVC.player?.seek(to: seekToTime)
         
         self.play()
     }
@@ -189,20 +193,25 @@ open class KoustPlayerView: UIViewController {
         let newCurrentTime: TimeInterval = Double(self.skipButtonDuration ?? 0)
         let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
         
+        self.slider.value                       = Float(seekToTime.seconds)
+        self.slider.maximumValue                = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
        
         hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(newCurrentTime))) { hours, minutes, seconds in
             let hours   = getStringFrom(seconds: hours)
             let minutes = getStringFrom(seconds: minutes)
             let seconds = getStringFrom(seconds: seconds)
-            self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+            if hours == "00"{
+                self.remainingTime.text = "\(minutes):\(seconds)"
+            }else{
+                self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+            }
         }
         
         self.playerVC.player?.seek(to: seekToTime)
-        
         self.play()
         
         
-        UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: {
             self.skipBtn.alpha      = 0
         }, completion: { _ in
             self.skipBtn.isHidden   = true
@@ -210,16 +219,15 @@ open class KoustPlayerView: UIViewController {
     }
     
     private func skipBtnAnimationShow(){
-        self.skipBtn.isHidden   = false
-        UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: {
         self.skipBtn.alpha      = 0.6
         }, completion: { _ in
+            self.skipBtn.isHidden   = false
         })
     }
     
     private func skipBtnAnimationHide(){
-        self.skipBtn.isHidden   = false
-        UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: {
             self.skipBtn.alpha      = 0
         }, completion: { _ in
             self.skipBtn.isHidden   = true
@@ -236,6 +244,7 @@ open class KoustPlayerView: UIViewController {
             self.pause()
         }
         
+        self.preriodicTimeObsever()
     }
     
     
@@ -260,34 +269,43 @@ open class KoustPlayerView: UIViewController {
 //            observer = nil
         }
         
-        observer = player?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [weak self] time in
+        player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100), queue: DispatchQueue.main) {
+            [unowned self] time in
             
             
-            self?.slider.maximumValue = Float(CGFloat(CMTimeGetSeconds(self?.playerVC.player?.currentItem?.duration ?? CMTime())))
-            
-            let remainingDuration     = Int(CGFloat(CMTimeGetSeconds(self?.playerVC.player?.currentItem?.duration ?? CMTime()))) - Int(CGFloat(CMTimeGetSeconds(self?.playerVC.player?.currentItem?.currentTime() ?? CMTime())))
-            
-            hmsFrom(seconds: remainingDuration) { hours, minutes, seconds in
-                
-                let hours = getStringFrom(seconds: hours)
-                let minutes = getStringFrom(seconds: minutes)
-                let seconds = getStringFrom(seconds: seconds)
-                
-                
-                self?.remainingTime.text = "\(hours):\(minutes):\(seconds)"
-            }
-            
-            let sliderValue : Float64 = CMTimeGetSeconds(time)
-            //this is the slider value update if you are using UISlider.
-            self?.slider.setValue(Float(sliderValue), animated: true)
-            
-            let playbackLikelyToKeepUp = self?.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
-            if playbackLikelyToKeepUp == false{
-                
-                //Here start the activity indicator inorder to show buffering
-            }else{
-                //stop the activity indicator
+            let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
+            if timeString != "0.00" {
+                if let totalDuration =  self.playerVC.player?.currentItem?.duration.seconds {
+                    self.slider.maximumValue                = Float(totalDuration)
+                    self.slider.setValue((Float(CMTimeGetSeconds(time))), animated: true)
+                    
+                    if CMTimeGetSeconds(time) > (self.skipButtonDuration ?? 0) {
+                        self.skipBtnAnimationHide()
+                    }else{
+                        self.skipBtnAnimationShow()
+                    }
+                    
+
+                    
+                    hmsFrom(seconds: Int(totalDuration - CMTimeGetSeconds(time))){ hours, minutes, seconds in
+                        let hours   = getStringFrom(seconds: hours)
+                        let minutes = getStringFrom(seconds: minutes)
+                        let seconds = getStringFrom(seconds: seconds)
+                        if hours == "00"{
+                            self.remainingTime.text = "\(minutes):\(seconds)"
+                        }else{
+                            self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+                        }
+                    }
+                    
+                    self.delegate?.koustPlayerPlaybackstimer(NSString: timeString)
+                    if Float(totalDuration) == Float(CMTimeGetSeconds(time)) {
+                        self.pause()
+                        self.delegate?.koustPlayerPlaybackDidEnd()
+                    }
+                }
             }
         }
     }
+    
 }

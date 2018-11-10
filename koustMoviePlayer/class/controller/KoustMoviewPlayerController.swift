@@ -21,11 +21,10 @@ open class KoustMoviewPlayerController: KoustPlayerView {
 
     
     
-    private func close(){
+    public func close(){
         
     }
-    
-
+   
 }
 
 
