@@ -12,11 +12,14 @@ import AVKit
 open class KoustPlayerView: UIViewController {
     
     public var videoURLS:[URL]                = []
-    public var autoPlay:KoustMoviePlayerState = .play
     public var skipButtonActive               = false
     public var skipButtonTitle                = "Skip"
+    public var backButtonTitle                = ""
     public var skipButtonDuration:Double?
     public var delegate:KoustPlayerProtocol?
+    
+    public var didEndState:koustMoviePlayerDidEndState                   = .manualClose
+    public var autoPlay:KoustMoviePlayerState                            = .play
     
     private var observer:Any?
     private var player:AVPlayer?
@@ -24,7 +27,6 @@ open class KoustPlayerView: UIViewController {
     private var _orientations   = UIInterfaceOrientationMask.landscape
     private var playerWidth     = UIScreen.main.bounds.width
     private var playerHeight    = UIScreen.main.bounds.height
-    private var interval        = CMTime(seconds: 28,preferredTimescale: CMTimeScale(NSEC_PER_SEC))
     
     private var playAndPauseBtn = UIButton()
     private var rewindBtn       = UIButton()
@@ -34,6 +36,7 @@ open class KoustPlayerView: UIViewController {
     private var thumbView       = UIView()
     private var thumbImage      = UIImageView()
     private var thumbCurrent    = UILabel()
+    private var backButton      = UIButton()
     private var asset:AVURLAsset?
     private var generator:AVAssetImageGenerator?
     
@@ -43,14 +46,14 @@ open class KoustPlayerView: UIViewController {
         playerVC.showsPlaybackControls              = false
         asset                                       = AVURLAsset(url: videoURLS.first!)
         generator                                   = AVAssetImageGenerator(asset: asset!)
-        generator?.appliesPreferredTrackTransform   = false
+        generator?.appliesPreferredTrackTransform   = true
 
         
 //        self.bottomContainer()
         UIApplication.topViewController()?.present(playerVC, animated: true){
                 self.playState()
                 self.bottomContainer()
-            
+                self.topContainer()
         }
         
         
@@ -98,6 +101,7 @@ open class KoustPlayerView: UIViewController {
         self.slider.minimumTrackTintColor   = UIColor.red
         self.slider.maximumTrackTintColor   = UIColor.white
         self.slider.tintColor               = UIColor.white
+        self.slider.maximumValue            = 0
         self.slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
         self.slider.addTarget(self, action: #selector(sliderTouchUpInside), for: .touchUpInside)
         self.slider.addTarget(self, action: #selector(sliderTouchUpOutside), for: .touchUpOutside)
@@ -127,6 +131,22 @@ open class KoustPlayerView: UIViewController {
         
         
     }
+    
+    
+    private func topContainer(){
+        self.backButton.translatesAutoresizingMaskIntoConstraints       = false
+        self.backButton.setTitle("\(backButtonTitle)", for: .normal)
+        self.backButton.setImage(imageNamed("left-arrow"), for: .normal)
+        self.backButton.tintColor                                       = UIColor.white
+        
+        self.playerVC.view.addSubview(backButton)
+        
+        self.backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        self.backButton.leftAnchor.constraint(equalTo: self.playerVC.view.leftAnchor, constant: 20).isActive            = true
+        self.backButton.topAnchor.constraint(equalTo: self.playerVC.view.topAnchor, constant: 15).isActive              = true
+        self.backButton.heightAnchor.constraint(equalToConstant: 30).isActive                                           = true
+    }
+    
     
     private func skiptBtnView(){
         
@@ -159,6 +179,14 @@ open class KoustPlayerView: UIViewController {
         self.pause()
         self.slider.maximumValue        = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
         let seconds : Float64           = Double(sender.value)
+        
+        let playbackLikelyToKeepUp = self.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
+        if playbackLikelyToKeepUp == false{
+            showActivityIndicatory(uiView: self.playerVC.view)
+        }else{
+            self.removeIndicatory()
+        }
+        
         hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(seconds))) { hours, minutes, seconds in
             
             let hours   = getStringFrom(seconds: hours)
@@ -255,8 +283,17 @@ open class KoustPlayerView: UIViewController {
         })
     }
     
+    @objc private func backButtonAction(){
+        self.pause()
+        player?.removeTimeObserver(observer)
+        observer = nil
+        
+        UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
+
+    }
+    
     private func skipBtnAnimationShow(){
-        UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: {
+        UIView.animate(withDuration: 0.5, delay: 0.15, options: [], animations: {
         self.skipBtn.alpha      = 0.6
         }, completion: { _ in
             self.skipBtn.isHidden   = false
@@ -323,13 +360,13 @@ open class KoustPlayerView: UIViewController {
     }
     
     
-    private func play(){
+    func play(){
         self.playerVC.player?.play()
         self.playAndPauseBtn.setImage(imageNamed("pause-button"), for: .normal)
         self.autoPlay   = .pause
     }
     
-    private func pause(){
+    func pause(){
         self.playerVC.player?.pause()
         self.playAndPauseBtn.setImage(imageNamed("play-button"), for: .normal)
         self.autoPlay   = .play
@@ -344,18 +381,24 @@ open class KoustPlayerView: UIViewController {
         }
     }
     
+    private func removeIndicatory(){
+        if let activityIndicatory = self.playerVC.view.viewWithTag(90) {
+            activityIndicatory.removeFromSuperview()
+        }
+    }
     
     func preriodicTimeObsever(){
         
-        if let observer = self.observer{
-            //removing time obse
-            player?.removeTimeObserver(observer)
-//            observer = nil
-        }
         
-        player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100), queue: DispatchQueue.main) {
+        observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100), queue: DispatchQueue.main) {
             [unowned self] time in
             
+            let playbackLikelyToKeepUp = self.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
+            if playbackLikelyToKeepUp == false{
+                showActivityIndicatory(uiView: self.playerVC.view)
+            }else{
+                self.removeIndicatory()
+            }
             
             let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
             if timeString != "0.00" {
@@ -386,9 +429,18 @@ open class KoustPlayerView: UIViewController {
                     if Float(totalDuration) == Float(CMTimeGetSeconds(time)) {
                         self.pause()
                         self.delegate?.koustPlayerPlaybackDidEnd()
+                        
+                        switch self.didEndState {
+                            case .autoClose:
+                                self.backButtonAction()
+                            case .manualClose:
+                                break
+                        }
                     }
                 }
             }
+            
+         
         }
     }
     

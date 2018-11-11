@@ -8,7 +8,7 @@
 
 import UIKit
 
-class KoustMPController: UIViewController,KoustPlayerProtocol {
+class KoustMPController: UIViewController {
 
     
 
@@ -20,24 +20,19 @@ class KoustMPController: UIViewController,KoustPlayerProtocol {
         // Skipbuttonduration should be double value.
         koustMPC.skipButtonDuration =  7
         koustMPC.skipButtonActive   = true
-        koustMPC.delegate           = self
+        koustMPC.backButtonTitle    = "Çizgi Film Sahnesi"
         koustMPC.videoURLS.append(URL(string: "https://sample-videos.com/video123/mp4/240/big_buck_bunny_240p_2mb.mp4")!)
         //koustMPC.videoURLS.append(URL())
         // Do any additional setup after loading the view.
-        
+     
     }
     
 
 
     @IBAction func playAction(_ sender: Any) {
-        koustMPC.show()
+        koustMPC.autoPlay           = .play
+        koustMPC.presentAVPlayer()
     }
     
-    func koustPlayerPlaybackDidEnd() {
-        print("Finished")
-    }
-    
-    func koustPlayerPlaybackstimer(NSString: String) {
-        print("Current:\(NSString)")
-    }
+
 }

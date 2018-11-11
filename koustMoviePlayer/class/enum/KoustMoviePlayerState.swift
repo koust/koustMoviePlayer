@@ -10,7 +10,10 @@ import Foundation
 
 
 public enum KoustMoviePlayerState {
-    case play
-    case pause
+    // you can settings video start. #Deafult play
     
+        // it will open automatic start.
+    case play
+        // it will not start automatically
+    case pause
 }
