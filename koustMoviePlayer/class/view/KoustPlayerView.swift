@@ -16,6 +16,7 @@ open class KoustPlayerView: UIViewController {
     public var skipButtonActive               = false
     public var skipButtonTitle                = "Skip"
     public var backButtonTitle                = ""
+    public var animationDuration              = 4
     public var skipButtonDuration:Double?
     public var delegate:KoustPlayerProtocol?
     
@@ -24,7 +25,7 @@ open class KoustPlayerView: UIViewController {
     
     private var observer:Any?
     private var player:AVPlayer?
-    private var playerVC        = KoustLandscapeAVPlayerController()
+    @objc private var playerVC        = KoustLandscapeAVPlayerController()
     private var _orientations   = UIInterfaceOrientationMask.landscape
     private var playerWidth     = UIScreen.main.bounds.width
     private var playerHeight    = UIScreen.main.bounds.height
@@ -38,6 +39,9 @@ open class KoustPlayerView: UIViewController {
     private var thumbImage      = UIImageView()
     private var thumbCurrent    = UILabel()
     private var backButton      = UIButton()
+    
+    private var animationCount    = 0
+    private var isAnimationActive = true
     private var asset:AVURLAsset?
     private var generator:AVAssetImageGenerator?
     
@@ -48,10 +52,12 @@ open class KoustPlayerView: UIViewController {
         asset                                       = AVURLAsset(url: videoURLS.first!)
         generator                                   = AVAssetImageGenerator(asset: asset!)
         generator?.appliesPreferredTrackTransform   = true
+        
 
         
 //        self.bottomContainer()
         UIApplication.topViewController()?.present(playerVC, animated: true){
+            
                 self.playState()
                 self.bottomContainer()
                 self.topContainer()
@@ -60,13 +66,28 @@ open class KoustPlayerView: UIViewController {
         
     }
     
+
     
     private func bottomContainer(){
         
+        let mainView = UIView()
         
-        //Play And Pause Button
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.mainHandleTap))
+        mainView.addGestureRecognizer(tap)
+        
+        self.playerVC.view.addSubview(mainView)
+        
+        mainView.leftAnchor.constraint(equalTo: self.playerVC.view.leftAnchor, constant: 0).isActive     = true
+        mainView.rightAnchor.constraint(equalTo: self.playerVC.view.rightAnchor, constant: 0).isActive   = true
+        mainView.topAnchor.constraint(equalTo: self.playerVC.view.topAnchor, constant: 0).isActive       = true
+        mainView.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: 0).isActive = true
+        
+        
+        //Play And Pause Button View
         self.playAndPauseBtn.translatesAutoresizingMaskIntoConstraints  = false
-//        self.playAndPauseBtn.frame  = CGRect(x: 30 , y: y, width: 25, height: 25)
         
         self.playerVC.view.addSubview(playAndPauseBtn)
         self.playerVC.view.addSubview(rewindBtn)
@@ -82,7 +103,7 @@ open class KoustPlayerView: UIViewController {
         
         
         
-        //Rewind Button
+        //Rewind Button View
         
         self.rewindBtn.translatesAutoresizingMaskIntoConstraints  = false
         self.rewindBtn.setImage(imageNamed("rewind-button"), for: .normal)
@@ -93,7 +114,7 @@ open class KoustPlayerView: UIViewController {
         self.rewindBtn.heightAnchor.constraint(equalToConstant: 25).isActive                                               = true
         
         
-        //Slider
+        //Slider View
         
         self.slider.translatesAutoresizingMaskIntoConstraints  = false
         
@@ -112,7 +133,8 @@ open class KoustPlayerView: UIViewController {
         self.slider.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
         self.slider.heightAnchor.constraint(equalToConstant: 30).isActive                                               = true
         self.slider.rightAnchor.constraint(equalTo: self.remainingTime.leftAnchor, constant:   -25).isActive            = true
-        // remainingTime
+        
+        // remainingTime View
         
         self.remainingTime.translatesAutoresizingMaskIntoConstraints  = false
   
@@ -133,6 +155,24 @@ open class KoustPlayerView: UIViewController {
         
     }
     
+    // handle tap for player view
+    @objc private func mainHandleTap(){
+        self.animationCount     =  0
+        allViewShow()
+    }
+    
+    private func allViewShow(){
+        let alphaValue:CGFloat          =  1
+        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
+            self.skipBtn.alpha          = alphaValue
+            self.slider.alpha           = alphaValue
+            self.remainingTime.alpha    = alphaValue
+            self.playAndPauseBtn.alpha  = alphaValue
+            self.rewindBtn.alpha        = alphaValue
+            self.backButton.alpha       = alphaValue
+        }, completion: { _ in
+        })
+    }
     
     private func topContainer(){
         self.backButton.translatesAutoresizingMaskIntoConstraints       = false
@@ -207,6 +247,7 @@ open class KoustPlayerView: UIViewController {
     }
     
     @objc func sliderTouchUpInside(_ sender: UISlider){
+        self.animationCount              =  0
         let newCurrentTime: TimeInterval = Double(sender.value)
         let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
 
@@ -397,17 +438,21 @@ open class KoustPlayerView: UIViewController {
         observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100), queue: DispatchQueue.main) {
             [unowned self] time in
             
+            // Activity Indicator part
             let playbackLikelyToKeepUp = self.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
             if playbackLikelyToKeepUp == false{
                 showActivityIndicatory(uiView: self.playerVC.view)
             }else{
                 self.removeIndicatory()
+
             }
             
             let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
             if timeString != "0.00" {
                 if let totalDuration =  self.playerVC.player?.currentItem?.duration.seconds {
+                    
                     self.slider.maximumValue                = Float(totalDuration)
+                    
                     self.slider.setValue((Float(CMTimeGetSeconds(time))), animated: true)
                     
                     if CMTimeGetSeconds(time) > (self.skipButtonDuration ?? 0) {
@@ -429,11 +474,12 @@ open class KoustPlayerView: UIViewController {
                         }
                     }
                     
+                    
                     self.delegate?.koustPlayerPlaybackstimer(NSString: timeString)
                     if Float(totalDuration) == Float(CMTimeGetSeconds(time)) {
                         self.pause()
                         self.delegate?.koustPlayerPlaybackDidEnd()
-                        
+                        self.allViewShow()
                         switch self.didEndState {
                             case .autoClose:
                                 self.backButtonAction()
@@ -441,6 +487,21 @@ open class KoustPlayerView: UIViewController {
                                 break
                         }
                     }
+                    
+                    // We hiding all views
+                    if self.animationDuration == (self.animationCount / 100) && self.isAnimationActive {
+                        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
+                            self.skipBtn.alpha          = 0
+                            self.slider.alpha           = 0
+                            self.remainingTime.alpha    = 0
+                            self.playAndPauseBtn.alpha  = 0
+                            self.rewindBtn.alpha        = 0
+                            self.backButton.alpha       = 0
+                        }, completion: { _ in
+                        })
+                    }
+                    
+                    self.animationCount += 1
                 }
             }
             
