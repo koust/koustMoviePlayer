@@ -53,7 +53,29 @@ open class KoustPlayerView: UIViewController {
         generator                                   = AVAssetImageGenerator(asset: asset!)
         generator?.appliesPreferredTrackTransform   = true
         
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            
+            let fileURL = dir.appendingPathComponent("sample.srt")
+            
+   
+            //reading
+            do {
+                let text2 = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
+                let pattern = "(?<index>^\\d+$)\\n^(?<startTime>\\d\\d:[0-5]\\d:[0-5]\\d,\\d{1,3}) --> (?<endTime>\\d\\d:[0-5]\\d:[0-5]\\d,\\d{1,3})$\\n(?<text>(?:^.+$\\n?)+)"
+                do {
+                    let regex = try NSRegularExpression(pattern: pattern, options: .anchorsMatchLines)
+                    let matches = regex.matches(in: text2, range: NSRange(..<text2.endIndex, in: text2))
+                    let firstTextRange = matches[0].range(withName: "text")
+                    let firstText = Range(firstTextRange, in: text2).flatMap { range in String(text2[range]) }
+                    print(firstText)
+                }catch {
+                    
+                }
 
+            }
+            catch {/* error handling here */}
+        }
+        
         
 //        self.bottomContainer()
         UIApplication.topViewController()?.present(playerVC, animated: true){
@@ -164,7 +186,6 @@ open class KoustPlayerView: UIViewController {
     private func allViewShow(){
         let alphaValue:CGFloat          =  1
         UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
-            self.skipBtn.alpha          = alphaValue
             self.slider.alpha           = alphaValue
             self.remainingTime.alpha    = alphaValue
             self.playAndPauseBtn.alpha  = alphaValue
@@ -241,8 +262,8 @@ open class KoustPlayerView: UIViewController {
             }else{
                 self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
             }
-            
-            self.createThumbView(currentThumbImage:self.getThumbImage(seconds:Double(sender.value))!,currentTime: self.remainingTime.text!)
+            self.getThumbImage(seconds:Double(sender.value))
+            self.createThumbView(currentTime: self.remainingTime.text!)
         }
     }
     
@@ -353,7 +374,7 @@ open class KoustPlayerView: UIViewController {
         })
     }
     
-    private func createThumbView(currentThumbImage:UIImage,currentTime:String){
+    private func createThumbView(currentThumbImage:UIImage = UIImage(),currentTime:String){
         self.thumbView.backgroundColor                              = UIColor.black
         self.thumbView.alpha                                        = 1
         self.playerVC.view.addSubview(thumbView)
@@ -417,12 +438,25 @@ open class KoustPlayerView: UIViewController {
         self.autoPlay   = .play
     }
     
-    private func getThumbImage(seconds:Double) -> UIImage? {
+    private func getThumbImage(seconds:Double)  {
         let timestamp = CMTime(seconds: seconds, preferredTimescale: 200)
-        if let imageRef = try? generator?.copyCGImage(at: timestamp, actualTime: nil) {
-            return UIImage(cgImage: imageRef!)
-        } else {
-            return nil
+        DispatchQueue.global(qos: .userInteractive).async {
+            do {
+                if let imageRef = try? self.generator?.copyCGImage(at: timestamp, actualTime: nil) {
+                    
+                    DispatchQueue.main.async {
+                
+                        self.thumbImage.image = UIImage(cgImage: imageRef!)
+                    }
+                } else {
+                    
+                    DispatchQueue.main.async {
+                    //return nil
+                    }
+                }
+            }catch{
+                
+            }
         }
     }
     
@@ -461,7 +495,7 @@ open class KoustPlayerView: UIViewController {
                         self.skipBtnAnimationShow()
                     }
                     
-
+                    print((self.playerVC.player?.currentItem?.asset as? AVURLAsset)?.resourceLoader)
                     
                     hmsFrom(seconds: Int(totalDuration - CMTimeGetSeconds(time))){ hours, minutes, seconds in
                         let hours   = getStringFrom(seconds: hours)
@@ -491,7 +525,6 @@ open class KoustPlayerView: UIViewController {
                     // We hiding all views
                     if self.animationDuration == (self.animationCount / 100) && self.isAnimationActive {
                         UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
-                            self.skipBtn.alpha          = 0
                             self.slider.alpha           = 0
                             self.remainingTime.alpha    = 0
                             self.playAndPauseBtn.alpha  = 0
