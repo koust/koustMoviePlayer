@@ -8,6 +8,7 @@
 
 import UIKit
 import AVKit
+import AudioToolbox
 
 open class KoustPlayerView: UIViewController {
     
@@ -172,6 +173,9 @@ open class KoustPlayerView: UIViewController {
     
     
     @objc func playAndPauseBtnAction(){
+            // vibration effect like netflix
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        
             self.playState()
     }
     
