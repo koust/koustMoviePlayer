@@ -11,6 +11,8 @@
 		5B8229072197862E00BBA2BE /* left-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B8229062197862E00BBA2BE /* left-arrow.png */; };
 		5B822909219839A900BBA2BE /* koustMoviePlayerDidEndState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B822908219839A900BBA2BE /* koustMoviePlayerDidEndState.swift */; };
 		5BE19898219A1B2A00049D3C /* sample.srt in Resources */ = {isa = PBXBuildFile; fileRef = 5BE19897219A1B2A00049D3C /* sample.srt */; };
+		5BE1989B219B668B00049D3C /* SubtitleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE1989A219B668B00049D3C /* SubtitleModel.swift */; };
+		5BE1989D219B6CA000049D3C /* KoustSubTitleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE1989C219B6CA000049D3C /* KoustSubTitleController.swift */; };
 		FA570E552192CA2B0059708F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E542192CA2B0059708F /* AppDelegate.swift */; };
 		FA570E572192CA2B0059708F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E562192CA2B0059708F /* ViewController.swift */; };
 		FA570E5A2192CA2B0059708F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA570E582192CA2B0059708F /* Main.storyboard */; };
@@ -51,6 +53,8 @@
 		5B8229062197862E00BBA2BE /* left-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "left-arrow.png"; sourceTree = "<group>"; };
 		5B822908219839A900BBA2BE /* koustMoviePlayerDidEndState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = koustMoviePlayerDidEndState.swift; sourceTree = "<group>"; };
 		5BE19897219A1B2A00049D3C /* sample.srt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sample.srt; sourceTree = "<group>"; };
+		5BE1989A219B668B00049D3C /* SubtitleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleModel.swift; sourceTree = "<group>"; };
+		5BE1989C219B6CA000049D3C /* KoustSubTitleController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustSubTitleController.swift; sourceTree = "<group>"; };
 		FA570E512192CA2B0059708F /* koustMoviePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = koustMoviePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA570E542192CA2B0059708F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA570E562192CA2B0059708F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -106,6 +110,14 @@
 				5B822902219713D400BBA2BE /* KoustPlayerProtocol.swift */,
 			);
 			path = protocol;
+			sourceTree = "<group>";
+		};
+		5BE19899219B664300049D3C /* model */ = {
+			isa = PBXGroup;
+			children = (
+				5BE1989A219B668B00049D3C /* SubtitleModel.swift */,
+			);
+			path = model;
 			sourceTree = "<group>";
 		};
 		FA570E482192CA2B0059708F = {
@@ -165,6 +177,7 @@
 		FA570E822192CA6E0059708F /* class */ = {
 			isa = PBXGroup;
 			children = (
+				5BE19899219B664300049D3C /* model */,
 				5B822901219713B800BBA2BE /* protocol */,
 				FAA6FC2B21944E0C00B11E48 /* enum */,
 				FAA6FC2821944AB100B11E48 /* helper */,
@@ -188,6 +201,7 @@
 			children = (
 				FA570E852192CA9E0059708F /* KoustMoviewPlayerController.swift */,
 				FA570E8E219313B60059708F /* KoustLandscapeAVPlayerController.swift */,
+				5BE1989C219B6CA000049D3C /* KoustSubTitleController.swift */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -386,10 +400,12 @@
 				FA570E8F219313B60059708F /* KoustLandscapeAVPlayerController.swift in Sources */,
 				5B822909219839A900BBA2BE /* koustMoviePlayerDidEndState.swift in Sources */,
 				FA570E862192CA9E0059708F /* KoustMoviewPlayerController.swift in Sources */,
+				5BE1989B219B668B00049D3C /* SubtitleModel.swift in Sources */,
 				FA570E8D2192D55A0059708F /* KoustMPController.swift in Sources */,
 				FA570E572192CA2B0059708F /* ViewController.swift in Sources */,
 				5B822903219713D400BBA2BE /* KoustPlayerProtocol.swift in Sources */,
 				FA570E552192CA2B0059708F /* AppDelegate.swift in Sources */,
+				5BE1989D219B6CA000049D3C /* KoustSubTitleController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

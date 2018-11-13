@@ -53,31 +53,11 @@ open class KoustPlayerView: UIViewController {
         generator                                   = AVAssetImageGenerator(asset: asset!)
         generator?.appliesPreferredTrackTransform   = true
         
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent("sample.srt")
-            
-   
-            //reading
-            do {
-                let text2 = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
-                let pattern = "(?<index>^\\d+$)\\n^(?<startTime>\\d\\d:[0-5]\\d:[0-5]\\d,\\d{1,3}) --> (?<endTime>\\d\\d:[0-5]\\d:[0-5]\\d,\\d{1,3})$\\n(?<text>(?:^.+$\\n?)+)"
-                do {
-                    let regex = try NSRegularExpression(pattern: pattern, options: .anchorsMatchLines)
-                    let matches = regex.matches(in: text2, range: NSRange(..<text2.endIndex, in: text2))
-                    let firstTextRange = matches[0].range(withName: "text")
-                    let firstText = Range(firstTextRange, in: text2).flatMap { range in String(text2[range]) }
-                    print(firstText)
-                }catch {
-                    
-                }
 
-            }
-            catch {/* error handling here */}
-        }
+            
+      
         
         
-//        self.bottomContainer()
         UIApplication.topViewController()?.present(playerVC, animated: true){
             
                 self.playState()
@@ -495,7 +475,7 @@ open class KoustPlayerView: UIViewController {
                         self.skipBtnAnimationShow()
                     }
                     
-                    print((self.playerVC.player?.currentItem?.asset as? AVURLAsset)?.resourceLoader)
+                    
                     
                     hmsFrom(seconds: Int(totalDuration - CMTimeGetSeconds(time))){ hours, minutes, seconds in
                         let hours   = getStringFrom(seconds: hours)
