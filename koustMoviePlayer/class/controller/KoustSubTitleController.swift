@@ -9,17 +9,24 @@
 import UIKit
 import Foundation
 
-public class KoustSubTitleController: UIViewController {
+public class KoustSubTitleController {
 
-    
+    public var delegate:KoustSubtitleDelegate
     fileprivate var subtitleModel:[SubtitleModel]   = []
+    
     
     private var hour: TimeInterval   = 0.0
     private var minute: TimeInterval = 0.0
     private var second: TimeInterval = 0.0
     private var c: TimeInterval      = 0.0
     
+    init(delegate:KoustSubtitleDelegate){
+        self.delegate = delegate
+    }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     public func setSubtitle(forResource:String){
         let subtitleFile = Bundle.main.path(forResource: forResource, ofType: "srt")
@@ -118,10 +125,9 @@ public class KoustSubTitleController: UIViewController {
                     subTitleModel.text              = text
                     
                     self.subtitleModel.append(subTitleModel)
-                    print(subTitleModel.startToTime)
                     
                 }
-                
+                self.delegate.subtitleList(list: self.subtitleModel)
             }catch {
                 print("oops!! Error")
             }

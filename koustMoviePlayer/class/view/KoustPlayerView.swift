@@ -10,7 +10,9 @@ import UIKit
 import AVKit
 import AudioToolbox
 
-open class KoustPlayerView: UIViewController {
+open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
+
+    
     
     public var videoURLS:[URL]                = []
     public var skipButtonActive               = false
@@ -18,7 +20,7 @@ open class KoustPlayerView: UIViewController {
     public var backButtonTitle                = ""
     public var animationDuration              = 4
     public var skipButtonDuration:Double?
-    public var delegate:KoustPlayerProtocol?
+    public var delegate:KoustPlayerDelegate?
     
     public var didEndState:koustMoviePlayerDidEndState                   = .manualClose
     public var autoPlay:KoustMoviePlayerState                            = .play
@@ -40,6 +42,8 @@ open class KoustPlayerView: UIViewController {
     private var thumbCurrent    = UILabel()
     private var backButton      = UIButton()
     
+    private var subtitleList:[SubtitleModel] = []
+    
     private var animationCount    = 0
     private var isAnimationActive = true
     private var asset:AVURLAsset?
@@ -53,10 +57,10 @@ open class KoustPlayerView: UIViewController {
         generator                                   = AVAssetImageGenerator(asset: asset!)
         generator?.appliesPreferredTrackTransform   = true
         
+        
 
-        let subTitle        = KoustSubTitleController()
+        let subTitle        = KoustSubTitleController(delegate: self)
         subTitle.setSubtitle(forResource: "sample")
-      
         
         
         DispatchQueue.main.async(execute: {
@@ -436,8 +440,6 @@ open class KoustPlayerView: UIViewController {
                     //return nil
                     }
                 }
-            }catch{
-                
             }
         }
     }
@@ -446,6 +448,12 @@ open class KoustPlayerView: UIViewController {
         if let activityIndicatory = self.playerVC.view.viewWithTag(90) {
             activityIndicatory.removeFromSuperview()
         }
+    }
+    
+    public func subtitleList(list: [SubtitleModel]) {
+        print(list)
+        self.subtitleList = list
+        print(self.subtitleList[1].endToTime)
     }
     
     func preriodicTimeObsever(){
@@ -462,6 +470,8 @@ open class KoustPlayerView: UIViewController {
                 self.removeIndicatory()
 
             }
+            
+           
             
             let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
             if timeString != "0.00" {

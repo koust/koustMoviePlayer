@@ -17,3 +17,10 @@ public protocol KoustPlayerDelegate: class {
     func koustPlayerPlaybackDidEnd()
     func koustPlayerPlaybackstimer(NSString: String)
 }
+
+
+public protocol KoustSubtitleDelegate: class {
+    
+    func subtitleList(list:[SubtitleModel])
+}
+

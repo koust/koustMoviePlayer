@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SubtitleModel: NSObject,Codable {
+public class SubtitleModel: NSObject,Codable {
     var index:Int?
     var startToTime:Double?
     var endToTime:Double?

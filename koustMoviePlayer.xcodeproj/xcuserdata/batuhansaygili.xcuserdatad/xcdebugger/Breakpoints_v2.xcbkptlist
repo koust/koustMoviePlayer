@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "koustMoviePlayer/class/GeneralUtility.swift"
-            timestampString = "563744908.655827"
+            timestampString = "563922575.707219"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "44"
@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "koustMoviePlayer/class/GeneralUtility.swift"
-            timestampString = "563744908.65633"
+            timestampString = "563922575.707299"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "43"
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "koustMoviePlayer/class/GeneralUtility.swift"
-            timestampString = "563744908.656569"
+            timestampString = "563922575.707356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "42"
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "koustMoviePlayer/class/controller/KoustSubTitleController.swift"
-            timestampString = "563913528.965412"
+            timestampString = "563923279.0133311"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
             landmarkName = "readingStrFile(subtitleURL:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,45 +74,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "koustMoviePlayer/class/controller/KoustSubTitleController.swift"
-            timestampString = "563913528.965501"
+            timestampString = "563923279.01342"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
             landmarkName = "readingStrFile(subtitleURL:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "koustMoviePlayer.KoustSubTitleController.(readingStrFile in _09DF1396CC598730D9A35D5B8317AEA4)(subtitleURL: Foundation.URL) -&gt; ()"
-                  moduleName = "koustMoviePlayer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/batuhansaygili/Documents/GitHub/koustMoviePlayer/koustMoviePlayer/class/controller/KoustSubTitleController.swift"
-                  timestampString = "563913422.823091"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "125"
-                  endingLineNumber = "125"
-                  offsetFromSymbolStart = "4953">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "koustMoviePlayer.KoustSubTitleController.(readingStrFile in _09DF1396CC598730D9A35D5B8317AEA4)(subtitleURL: Foundation.URL) -&gt; ()"
-                  moduleName = "koustMoviePlayer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/batuhansaygili/Documents/GitHub/koustMoviePlayer/koustMoviePlayer/class/controller/KoustSubTitleController.swift"
-                  timestampString = "563913422.826245"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "125"
-                  endingLineNumber = "125"
-                  offsetFromSymbolStart = "5354">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
