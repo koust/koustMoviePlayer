@@ -12,8 +12,13 @@ import Foundation
 public class KoustSubTitleController: UIViewController {
 
     
+    fileprivate var subtitleModel:[SubtitleModel]   = []
     
-    var h: TimeInterval = 0.0, m: TimeInterval = 0.0, s: TimeInterval = 0.0, c: TimeInterval = 0.0
+    private var hour: TimeInterval   = 0.0
+    private var minute: TimeInterval = 0.0
+    private var second: TimeInterval = 0.0
+    private var c: TimeInterval      = 0.0
+    
     
     
     public func setSubtitle(forResource:String){
@@ -35,34 +40,34 @@ public class KoustSubTitleController: UIViewController {
     
     private func getFromTime(fromTime:String) -> Double {
         
-        var scanner = Scanner(string: fromTime)
+        let scanner = Scanner(string: fromTime)
         
-        scanner.scanDouble(&h)
+        scanner.scanDouble(&hour)
         scanner.scanString(":", into: nil)
-        scanner.scanDouble(&m)
+        scanner.scanDouble(&minute)
         scanner.scanString(":", into: nil)
-        scanner.scanDouble(&s)
+        scanner.scanDouble(&second)
         scanner.scanString(",", into: nil)
         scanner.scanDouble(&c)
         
-        let fromTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
+        let fromTime = (hour * 3600.0) + (minute * 60.0) + second + (c / 1000.0)
         
         return fromTime
     }
     
     private func getToTime(toTime:String) -> Double {
         
-        var scanner = Scanner(string: toTime)
+        let scanner = Scanner(string: toTime)
         
-        scanner.scanDouble(&h)
+        scanner.scanDouble(&hour)
         scanner.scanString(":", into: nil)
-        scanner.scanDouble(&m)
+        scanner.scanDouble(&minute)
         scanner.scanString(":", into: nil)
-        scanner.scanDouble(&s)
+        scanner.scanDouble(&second)
         scanner.scanString(",", into: nil)
         scanner.scanDouble(&c)
         
-        let toTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
+        let toTime = (hour * 3600.0) + (minute * 60.0) + second + (c / 1000.0)
         
         return toTime
     }
@@ -81,7 +86,6 @@ public class KoustSubTitleController: UIViewController {
                 for m in matches {
                     
                     let group = (payload as NSString).substring(with: m.range)
-                    
                     var regex = try NSRegularExpression(pattern: "^[0-9]+", options: .caseInsensitive)
                     var match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.count))
 
@@ -107,20 +111,24 @@ public class KoustSubTitleController: UIViewController {
                     }
                     let text = (group as NSString).replacingCharacters(in: range, with: "")
                     
-                    // Create final object
-//                    let final = NSMutableDictionary()
-//                    final["from"] = fromTime
-//                    final["to"] = toTime
-//                    final["text"] = text
+                    let subTitleModel               = SubtitleModel()
+                    subTitleModel.index             = 0
+                    subTitleModel.startToTime       = getFromTime(fromTime: fromStr)
+                    subTitleModel.endToTime         = getToTime(toTime: toStr)
+                    subTitleModel.text              = text
                     
-                    print(getFromTime(fromTime: fromStr))
-                    print(getToTime(toTime: toStr))
-                    print(text)
+                    self.subtitleModel.append(subTitleModel)
+                    print(subTitleModel.startToTime)
+                    
                 }
+                
             }catch {
                 print("oops!! Error")
             }
         }
     }
+    
+    
+    
     
 }

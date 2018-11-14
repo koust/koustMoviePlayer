@@ -13,4 +13,9 @@ class SubtitleModel: NSObject,Codable {
     var startToTime:Double?
     var endToTime:Double?
     var text:String?
+    
+    override init() {
+        
+        super.init()
+    }
 }

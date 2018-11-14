@@ -8,7 +8,7 @@
 
 import UIKit
 
-public protocol KoustPlayerProtocol: class {
+public protocol KoustPlayerDelegate: class {
 //    func playerReady(player: Player)
 //    func playerPlaybackStateDidChange(player: Player)
 //    func playerBufferingStateDidChange(player: Player)

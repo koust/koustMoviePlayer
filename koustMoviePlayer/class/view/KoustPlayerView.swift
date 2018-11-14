@@ -54,17 +54,19 @@ open class KoustPlayerView: UIViewController {
         generator?.appliesPreferredTrackTransform   = true
         
 
-            
+        let subTitle        = KoustSubTitleController()
+        subTitle.setSubtitle(forResource: "sample")
       
         
         
-        UIApplication.topViewController()?.present(playerVC, animated: true){
-            
-                self.playState()
-                self.bottomContainer()
-                self.topContainer()
-        }
-        
+        DispatchQueue.main.async(execute: {
+            UIApplication.topViewController()?.present(self.playerVC, animated: true){
+                
+                    self.playState()
+                    self.bottomContainer()
+                    self.topContainer()
+            }
+        })
         
     }
     

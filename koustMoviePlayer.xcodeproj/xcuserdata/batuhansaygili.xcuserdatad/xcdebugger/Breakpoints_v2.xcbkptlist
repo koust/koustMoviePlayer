@@ -51,5 +51,69 @@
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "koustMoviePlayer/class/controller/KoustSubTitleController.swift"
+            timestampString = "563913528.965412"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "readingStrFile(subtitleURL:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "koustMoviePlayer/class/controller/KoustSubTitleController.swift"
+            timestampString = "563913528.965501"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "readingStrFile(subtitleURL:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "koustMoviePlayer.KoustSubTitleController.(readingStrFile in _09DF1396CC598730D9A35D5B8317AEA4)(subtitleURL: Foundation.URL) -&gt; ()"
+                  moduleName = "koustMoviePlayer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/batuhansaygili/Documents/GitHub/koustMoviePlayer/koustMoviePlayer/class/controller/KoustSubTitleController.swift"
+                  timestampString = "563913422.823091"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "125"
+                  endingLineNumber = "125"
+                  offsetFromSymbolStart = "4953">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "koustMoviePlayer.KoustSubTitleController.(readingStrFile in _09DF1396CC598730D9A35D5B8317AEA4)(subtitleURL: Foundation.URL) -&gt; ()"
+                  moduleName = "koustMoviePlayer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/batuhansaygili/Documents/GitHub/koustMoviePlayer/koustMoviePlayer/class/controller/KoustSubTitleController.swift"
+                  timestampString = "563913422.826245"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "125"
+                  endingLineNumber = "125"
+                  offsetFromSymbolStart = "5354">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

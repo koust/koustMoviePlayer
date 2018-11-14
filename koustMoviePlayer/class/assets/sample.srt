@@ -7,6 +7,6 @@ For www.forom.com
 <i>Tonight's the night.</i>
 
 3
-00:00:03,000 --> 00:00:15,000
+00:01:03,000 --> 00:02:15,400
 <i>And it's going to happen
 again and again --</i>
