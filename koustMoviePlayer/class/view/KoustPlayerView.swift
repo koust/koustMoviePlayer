@@ -25,6 +25,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     public var didEndState:koustMoviePlayerDidEndState                   = .manualClose
     public var autoPlay:KoustMoviePlayerState                            = .play
     
+    private var subtitleState:KoustMPSubtitleState                       = .starToTime
+    
     private var observer:Any?
     private var player:AVPlayer?
     @objc private var playerVC        = KoustLandscapeAVPlayerController()
@@ -42,8 +44,9 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     private var thumbCurrent    = UILabel()
     private var backButton      = UIButton()
     
-    private var subtitleList:[SubtitleModel] = []
     
+    private var subtitleList:[SubtitleModel] = []
+    private var subtitleCount    = 0
     private var animationCount    = 0
     private var isAnimationActive = true
     private var asset:AVURLAsset?
@@ -453,13 +456,43 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     public func subtitleList(list: [SubtitleModel]) {
         print(list)
         self.subtitleList = list
-        print(self.subtitleList[1].endToTime)
+    }
+    
+    private func showSubtitle(currentTime:Double){
+        
+
+        
+        if self.subtitleList.count > 0  && self.subtitleCount < self.subtitleList.count {
+            
+            if subtitleState == .starToTime {
+                if (self.subtitleList[self.subtitleCount].startToTime ?? 0) <= currentTime {
+                    print(self.subtitleList[self.subtitleCount].text)
+                    self.subtitleState   = .endToTime
+                }
+            }
+            
+            
+            if subtitleState == .endToTime {
+                if (self.subtitleList[self.subtitleCount].endToTime ?? 0) <= currentTime {
+                    print("silindi")
+                    
+                    if self.subtitleCount < self.subtitleList.count {
+                        print(subtitleCount)
+                        self.subtitleState   = .starToTime
+                        self.subtitleCount += 1
+                        
+                        print(subtitleCount)
+                    }
+                }
+            }
+            
+        }
     }
     
     func preriodicTimeObsever(){
         
         
-        observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100), queue: DispatchQueue.main) {
+        observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main) {
             [unowned self] time in
             
             // Activity Indicator part
@@ -470,10 +503,11 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                 self.removeIndicatory()
 
             }
-            
-           
+            self.showSubtitle(currentTime: time.seconds)
+          
             
             let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
+            
             if timeString != "0.00" {
                 if let totalDuration =  self.playerVC.player?.currentItem?.duration.seconds {
                     
