@@ -21,7 +21,7 @@ class KoustMPController: UIViewController {
         koustMPC.skipButtonDuration =  7
         koustMPC.skipButtonActive   = true
         koustMPC.backButtonTitle    = "Çizgi Film Sahnesi"
-        koustMPC.videoURLS.append(URL(string: "https://sample-videos.com/video123/mp4/240/big_buck_bunny_240p_2mb.mp4")!)
+        koustMPC.videoURLS.append(URL(string: "http://www.storiesinflight.com/js_videosub/jellies.mp4")!)
         //koustMPC.videoURLS.append(URL())
         // Do any additional setup after loading the view.
      

@@ -29,7 +29,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     private var observer:Any?
     private var player:AVPlayer?
-    @objc private var playerVC        = KoustLandscapeAVPlayerController()
+    @objc private var playerVC  = KoustLandscapeAVPlayerController()
     private var _orientations   = UIInterfaceOrientationMask.landscape
     private var playerWidth     = UIScreen.main.bounds.width
     private var playerHeight    = UIScreen.main.bounds.height
@@ -43,6 +43,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     private var thumbImage      = UIImageView()
     private var thumbCurrent    = UILabel()
     private var backButton      = UIButton()
+    private var subtitle        = UILabel()
     
     
     private var subtitleList:[SubtitleModel] = []
@@ -163,7 +164,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             self.skipBtnAnimationShow()
         }
         
-        
+        self.subtitleView()
     }
     
     // handle tap for player view
@@ -220,7 +221,23 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.skipBtn.widthAnchor.constraint(equalToConstant: 60).isActive                                                      = true
     }
     
-    
+    private func subtitleView(){
+        self.subtitle.translatesAutoresizingMaskIntoConstraints     = false
+        self.subtitle.backgroundColor                               = UIColor.black.withAlphaComponent(0.7)
+        self.subtitle.textColor                                     = UIColor.white
+        self.subtitle.layer.cornerRadius                            = 5
+        self.subtitle.textAlignment                                 = .center
+        self.subtitle.font                                          = UIFont(name: "Helvetica", size: 15)
+        self.subtitle.isHidden                                      = true
+        self.subtitle.numberOfLines                                 = 0
+        self.subtitle.lineBreakMode                                 = .byWordWrapping
+        
+        self.playerVC.view.addSubview(self.subtitle)
+        
+        self.subtitle.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive         = true
+        self.subtitle.bottomAnchor.constraint(equalTo: self.slider.topAnchor, constant: -25).isActive                   = true
+        self.subtitle.heightAnchor.constraint(greaterThanOrEqualToConstant: 25).isActive                                = true
+    }
     
     @objc func playAndPauseBtnAction(){
             // vibration effect like netflix
@@ -231,6 +248,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     @objc func sliderValueChanged(_ sender:UISlider){
         self.pause()
+        self.subtitle.isHidden          = true
         self.slider.maximumValue        = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
         let seconds : Float64           = Double(sender.value)
         
@@ -277,7 +295,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         }else{
             self.skipBtnAnimationShow()
         }
-        
+        self.indexOfSubtitle(currentTime: Double(sender.value))
         self.play()
     }
     
@@ -303,6 +321,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             self.skipBtnAnimationShow()
         }
         
+        self.indexOfSubtitle(currentTime: Double(sender.value))
         self.play()
     }
     
@@ -327,6 +346,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             }
         }
         
+        self.indexOfSubtitle(currentTime: Double(self.skipButtonDuration ?? 0))
         self.playerVC.player?.seek(to: seekToTime)
         self.play()
         
@@ -458,6 +478,26 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.subtitleList = list
     }
     
+    private func indexOfSubtitle(currentTime:Double){
+        
+       _ = self.subtitleList.enumerated().map{ ($0,$1)
+        
+        if (self.subtitleList.first?.startToTime ?? 0) > currentTime {
+            self.subtitleCount = 0
+            self.subtitleState = .starToTime
+        }else{
+            
+            if ($1.startToTime ?? 0) <= currentTime {
+                if ($1.endToTime ?? 0) >= currentTime {
+                    self.subtitleCount = $0
+                    self.subtitleState = .starToTime
+                }
+            }
+        }
+
+        }
+    }
+    
     private func showSubtitle(currentTime:Double){
         
 
@@ -467,13 +507,19 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             if subtitleState == .starToTime {
                 if (self.subtitleList[self.subtitleCount].startToTime ?? 0) <= currentTime {
                     print(self.subtitleList[self.subtitleCount].text)
-                    self.subtitleState   = .endToTime
+
+                    self.subtitle.text                          = self.subtitleList[self.subtitleCount].text
+                    self.subtitle.isHidden                      = false
+                    self.subtitleState                          = .endToTime
                 }
             }
             
             
             if subtitleState == .endToTime {
                 if (self.subtitleList[self.subtitleCount].endToTime ?? 0) <= currentTime {
+                    
+                    self.subtitle.text                          = ""
+                    self.subtitle.isHidden                      = true
                     print("silindi")
                     
                     if self.subtitleCount < self.subtitleList.count {
