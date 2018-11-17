@@ -11,25 +11,29 @@ import UIKit
 class KoustMPController: UIViewController {
 
     
-
-    let koustMPC = KoustMoviewPlayerController()
+        var koustMPC:KoustPlayerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Do any additional setup after loading the view.
+     
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+       koustMPC = KoustPlayerView()
+        
+    }
 
+
+    @IBAction func playAction(_ sender: Any) {
+        
         // Skipbuttonduration should be double value.
         koustMPC.skipButtonDuration =  7
         koustMPC.skipButtonActive   = true
         koustMPC.backButtonTitle    = "Çizgi Film Sahnesi"
         koustMPC.videoURLS.append(URL(string: "http://www.storiesinflight.com/js_videosub/jellies.mp4")!)
-        //koustMPC.videoURLS.append(URL())
-        // Do any additional setup after loading the view.
-     
-    }
-    
-
-
-    @IBAction func playAction(_ sender: Any) {
         koustMPC.autoPlay           = .play
         koustMPC.presentAVPlayer()
     }

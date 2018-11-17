@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "koustMoviePlayer/class/view/KoustPlayerView.swift"
-            timestampString = "564162066.254565"
+            timestampString = "564186366.283795"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "484"
-            endingLineNumber = "484"
+            startingLineNumber = "486"
+            endingLineNumber = "486"
             landmarkName = "indexOfSubtitle(currentTime:)"
             landmarkType = "7">
          </BreakpointContent>

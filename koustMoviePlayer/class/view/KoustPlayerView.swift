@@ -360,11 +360,13 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     @objc private func backButtonAction(){
         self.pause()
-        player?.removeTimeObserver(observer)
+        player?.removeTimeObserver(observer ?? (Any).self)
         observer = nil
         
+            
+        self.playerVC.dismiss(animated: true, completion: nil)
         UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
-
+        
     }
     
     private func skipBtnAnimationShow(){
@@ -539,32 +541,32 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         
         
         observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main) {
-            [unowned self] time in
+            [weak self] time in
             
             // Activity Indicator part
-            let playbackLikelyToKeepUp = self.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
+            let playbackLikelyToKeepUp = self?.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
             if playbackLikelyToKeepUp == false{
-                showActivityIndicatory(uiView: self.playerVC.view)
+                showActivityIndicatory(uiView: (self?.playerVC.view)!)
             }else{
-                self.removeIndicatory()
+                self?.removeIndicatory()
 
             }
-            self.showSubtitle(currentTime: time.seconds)
+            self?.showSubtitle(currentTime: time.seconds)
           
             
             let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
             
             if timeString != "0.00" {
-                if let totalDuration =  self.playerVC.player?.currentItem?.duration.seconds {
+                if let totalDuration =  self?.playerVC.player?.currentItem?.duration.seconds {
                     
-                    self.slider.maximumValue                = Float(totalDuration)
+                    self?.slider.maximumValue                = Float(totalDuration)
                     
-                    self.slider.setValue((Float(CMTimeGetSeconds(time))), animated: true)
+                    self?.slider.setValue((Float(CMTimeGetSeconds(time))), animated: true)
                     
-                    if CMTimeGetSeconds(time) > (self.skipButtonDuration ?? 0) {
-                        self.skipBtnAnimationHide()
+                    if CMTimeGetSeconds(time) > (self?.skipButtonDuration ?? 0) {
+                        self?.skipBtnAnimationHide()
                     }else{
-                        self.skipBtnAnimationShow()
+                        self?.skipBtnAnimationShow()
                     }
                     
                     
@@ -574,39 +576,41 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                         let minutes = getStringFrom(seconds: minutes)
                         let seconds = getStringFrom(seconds: seconds)
                         if hours == "00"{
-                            self.remainingTime.text = "\(minutes):\(seconds)"
+                            self?.remainingTime.text = "\(minutes):\(seconds)"
                         }else{
-                            self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+                            self?.remainingTime.text = "\(hours):\(minutes):\(seconds)"
                         }
                     }
                     
                     
-                    self.delegate?.koustPlayerPlaybackstimer(NSString: timeString)
+                    self?.delegate?.koustPlayerPlaybackstimer(NSString: timeString)
                     if Float(totalDuration) == Float(CMTimeGetSeconds(time)) {
-                        self.pause()
-                        self.delegate?.koustPlayerPlaybackDidEnd()
-                        self.allViewShow()
-                        switch self.didEndState {
-                            case .autoClose:
-                                self.backButtonAction()
-                            case .manualClose:
+                        self?.pause()
+                        self?.delegate?.koustPlayerPlaybackDidEnd()
+                        self?.allViewShow()
+                        switch self?.didEndState {
+                        case .autoClose?:
+                                self?.backButtonAction()
+                        case .manualClose?:
                                 break
+                        case .none:
+                            break
                         }
                     }
                     
                     // We hiding all views
-                    if self.animationDuration == (self.animationCount / 100) && self.isAnimationActive {
+                    if self?.animationDuration == ((self?.animationCount)! / 100) && (self?.isAnimationActive)! {
                         UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
-                            self.slider.alpha           = 0
-                            self.remainingTime.alpha    = 0
-                            self.playAndPauseBtn.alpha  = 0
-                            self.rewindBtn.alpha        = 0
-                            self.backButton.alpha       = 0
+                            self?.slider.alpha           = 0
+                            self?.remainingTime.alpha    = 0
+                            self?.playAndPauseBtn.alpha  = 0
+                            self?.rewindBtn.alpha        = 0
+                            self?.backButton.alpha       = 0
                         }, completion: { _ in
                         })
                     }
                     
-                    self.animationCount += 1
+                    self?.animationCount += 1
                 }
             }
             
