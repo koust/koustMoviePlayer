@@ -28,10 +28,27 @@ public class KoustSubTitleController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func setSubtitleLink(srtUrl:String){
+        let subtitleURL  = URL(string: srtUrl)
+        
+        let task = URLSession.shared.dataTask(with:subtitleURL!) { (data, response, error) in
+                if error != nil {
+                    print(error!)
+                }
+                else {
+                    if let textFile = String(data: data!, encoding: .utf8) {
+                        print(textFile)
+                    }
+                }
+            }
+            task.resume()
+        self.readingStrFile(subtitleURL: subtitleURL!,link: true)
+    }
+    
     public func setSubtitle(forResource:String){
         let subtitleFile = Bundle.main.path(forResource: forResource, ofType: "srt")
         let subtitleURL  = URL(fileURLWithPath: subtitleFile!)
-        
+    
         
         self.readingStrFile(subtitleURL: subtitleURL)
     }
@@ -80,11 +97,14 @@ public class KoustSubTitleController {
     }
     
     // Reading File
-    private func readingStrFile(subtitleURL:URL){
+    private func readingStrFile(subtitleURL:URL,link:Bool=false){
         do {
-            let string = try! String(contentsOf: subtitleURL, encoding: .utf8)
-            let payload = self.payLoad(text: string)
+            var string:String!
+       
+            string = try! String(contentsOf: subtitleURL, encoding: .utf8)
             
+            
+            let payload = self.payLoad(text: string)
             let pattern = "(\\d+)\\n([\\d:,.]+)\\s+-{2}\\>\\s+([\\d:,.]+)\\n([\\s\\S]*?(?=\\n{2,}|$))"
             do {
                 let regex = try NSRegularExpression(pattern: pattern, options: .caseInsensitive)

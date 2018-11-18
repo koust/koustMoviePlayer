@@ -8,11 +8,11 @@
 
 import UIKit
 
-open class KoustMoviewPlayerController: KoustPlayerView {
+open class KoustMoviewPlayerController: UIViewController {
 
 
     
- 
+    
 
     
     

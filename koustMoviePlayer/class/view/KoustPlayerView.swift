@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AudioToolbox
 
-open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
+public class KoustPlayerView: KoustMoviewPlayerController,KoustSubtitleDelegate {
 
     
     
@@ -46,15 +46,14 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     private var backButton      = UIButton()
     private var subtitle        = UILabel()
 
-    
+    private var thumbCenterXCons:NSLayoutConstraint!
     private var subtitleBottomCons:NSLayoutConstraint!
     private var subtitleNotSliderBottomCons:NSLayoutConstraint!
     
-    
     private var subtitleList:[SubtitleModel] = []
-    private var subtitleCount     = 0
-    private var animationCount    = 0
-    private var isAnimationActive = true
+    private var subtitleCount                = 0
+    private var animationCount               = 0
+    private var isAnimationActive            = true
     private var asset:AVURLAsset!
     
     private var playerItem: AVPlayerItem!
@@ -89,10 +88,9 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         asset                                       = AVURLAsset(url:videoURL)
         
         
-
         let subTitle        = KoustSubTitleController(delegate: self)
         subTitle.setSubtitle(forResource: "sample")
-        
+//        subTitle.setSubtitleLink(srtUrl: "http://mmoplay2.org/Narcos.Mexico.S01E01.srt")
         
         DispatchQueue.main.async(execute: {
             UIApplication.topViewController()?.present(self.playerVC, animated: true){
@@ -193,6 +191,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             self.skipBtnAnimationShow()
         }
         
+        self.createThumbView()
         self.subtitleView()
     }
     
@@ -241,12 +240,24 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.slider.maximumValue        = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
         let seconds : Float64           = Double(sender.value)
         
+        
+        
+        self.thumbView.isHidden         = false
+        self.thumbView.alpha            = 1
+        if (self.slider.frame.size.width/2) >= (self.slider.frame.size.width*CGFloat((sender.value)/self.slider.maximumValue)) {
+            self.thumbCenterXCons.constant  = -CGFloat(self.slider.frame.size.width/2) + (self.slider.frame.size.width*CGFloat((sender.value)/self.slider.maximumValue))
+        }else{
+            self.thumbCenterXCons.constant  = ((self.slider.frame.size.width)*(CGFloat((sender.value)/self.slider.maximumValue))) - (self.slider.frame.size.width/2)
+        }
+        self.playerVC.view.layoutIfNeeded()
+        
         let playbackLikelyToKeepUp = self.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
         if playbackLikelyToKeepUp == false{
             showActivityIndicatory(uiView: self.playerVC.view)
         }else{
             self.removeIndicatory()
         }
+        
         
         hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(seconds))) { hours, minutes, seconds in
             
@@ -259,11 +270,13 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                 self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
             }
         }
+        self.thumbCurrent.text          =   self.remainingTime.text
+        
         self.getThumbImage(sliderCurrentTime: Double(sender.value) ,handler: { image in
             DispatchQueue.main.async {
                 
-                self.createThumbView(currentTime: self.remainingTime.text!)
                 self.thumbImage.image = image
+                
             }
         })
  
@@ -281,7 +294,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         UIView.animate(withDuration: 0.3, delay: 0, options: [], animations: {
             self.thumbView.alpha      = 0
         }, completion: { _ in
-            self.thumbView.removeFromSuperview()
+            self.thumbView.isHidden   = true
         })
         
         
@@ -306,7 +319,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         UIView.animate(withDuration: 0.3, delay: 0, options: [], animations: {
             self.thumbView.alpha      = 0
         }, completion: { _ in
-            self.thumbView.removeFromSuperview()
+            self.thumbView.isHidden   = true
         })
         
         
@@ -393,15 +406,19 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     }
     
     // Thumbnail View
-    private func createThumbView(currentThumbImage:UIImage = UIImage(),currentTime:String){
+    private func createThumbView(currentThumbImage:UIImage = UIImage(),currentTime:String = ""){
         self.thumbView.backgroundColor                              = UIColor.black
         self.thumbView.alpha                                        = 1
+        self.thumbView.isHidden                                     = true
         self.playerVC.view.addSubview(thumbView)
         
         
         self.thumbView.translatesAutoresizingMaskIntoConstraints    = false
         
-        self.thumbView.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive    = true
+        self.thumbCenterXCons = self.thumbView.centerXAnchor.constraint(equalTo: self.slider.centerXAnchor, constant: 0)
+        
+        self.thumbCenterXCons.isActive      = true
+        
         self.thumbView.centerYAnchor.constraint(equalTo: self.playerVC.view.centerYAnchor, constant: 20).isActive   = true
         self.thumbView.widthAnchor.constraint(equalToConstant: self.playerVC.view.frame.width / 3).isActive         = true
         self.thumbView.heightAnchor.constraint(equalToConstant: self.playerVC.view.frame.height / 3).isActive       = true
