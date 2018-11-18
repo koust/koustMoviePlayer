@@ -14,11 +14,12 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
 
     
     
-    public var videoURLS:[URL]                = []
+    public var videoURL:URL!
     public var skipButtonActive               = false
     public var skipButtonTitle                = "Skip"
     public var backButtonTitle                = ""
     public var animationDuration              = 4
+    public var rewindDuration                 = 10
     public var skipButtonDuration:Double?
     public var delegate:KoustPlayerDelegate?
     
@@ -51,17 +52,18 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     
     private var subtitleList:[SubtitleModel] = []
-    private var subtitleCount    = 0
+    private var subtitleCount     = 0
     private var animationCount    = 0
     private var isAnimationActive = true
     private var asset:AVURLAsset?
     private var generator:AVAssetImageGenerator?
+    private var getCurrentTime:Double   = 0
     
     func presentAVPlayer(){
-        player                                      = AVPlayer(url:videoURLS.first!)
+        player                                      = AVPlayer(url:videoURL)
         playerVC.player                             = player
         playerVC.showsPlaybackControls              = false
-        asset                                       = AVURLAsset(url: videoURLS.first!)
+        asset                                       = AVURLAsset(url:videoURL)
         generator                                   = AVAssetImageGenerator(asset: asset!)
         generator?.appliesPreferredTrackTransform   = true
         
@@ -124,6 +126,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.rewindBtn.translatesAutoresizingMaskIntoConstraints  = false
         self.rewindBtn.setImage(imageNamed("rewind-button"), for: .normal)
         
+        self.rewindBtn.addTarget(self, action: #selector(rewindBtnAction), for: .touchUpInside)
+        
         self.rewindBtn.leftAnchor.constraint(equalTo: self.playAndPauseBtn.rightAnchor, constant:   35).isActive           = true
         self.rewindBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
         self.rewindBtn.widthAnchor.constraint(equalToConstant: 20).isActive                                                = true
@@ -171,6 +175,14 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.subtitleView()
     }
     
+    @objc private func rewindBtnAction(){
+        if getCurrentTime-Double(rewindDuration) < 0 {
+            self.setDuration(duration:0)
+        }else{
+            self.setDuration(duration:getCurrentTime-Double(rewindDuration))
+        }
+    }
+    
     // handle tap for player view
     @objc private func mainHandleTap(){
         self.animationCount     =  0
@@ -193,67 +205,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         })
     }
     
-    private func topContainer(){
-        self.backButton.translatesAutoresizingMaskIntoConstraints       = false
-        self.backButton.setTitle("\(backButtonTitle)", for: .normal)
-        self.backButton.setImage(imageNamed("left-arrow"), for: .normal)
-        self.backButton.tintColor                                       = UIColor.white
-        
-        self.playerVC.view.addSubview(backButton)
-        
-        self.backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
-        self.backButton.leftAnchor.constraint(equalTo: self.playerVC.view.leftAnchor, constant: 20).isActive            = true
-        self.backButton.topAnchor.constraint(equalTo: self.playerVC.view.topAnchor, constant: 15).isActive              = true
-        self.backButton.heightAnchor.constraint(equalToConstant: 30).isActive                                           = true
-    }
-    
-    
-    private func skiptBtnView(){
-        
-        self.skipBtn.translatesAutoresizingMaskIntoConstraints      = false
-        self.skipBtn.setTitle(skipButtonTitle, for: .normal)
-        self.skipBtn.backgroundColor                                = UIColor.black
-        self.skipBtn.alpha                                          = 0
-        self.skipBtn.tintColor                                      = UIColor.white
-        self.skipBtn.layer.borderColor                              = UIColor.white.cgColor
-        self.skipBtn.layer.borderWidth                              = 1
-        self.skipBtn.contentMode                                    = .center
-        self.skipBtn.layer.cornerRadius                             = 3
-        self.skipBtn.addTarget(self, action: #selector(setSkipDuration), for: .touchUpInside)
-        
-        
-        self.playerVC.view.addSubview(skipBtn)
-        
-        self.skipBtn.rightAnchor.constraint(equalTo: self.playerVC.view.rightAnchor, constant: -25).isActive                   = true
-        self.skipBtn.bottomAnchor.constraint(equalTo: self.remainingTime.topAnchor, constant: -30).isActive                    = true
-        self.skipBtn.widthAnchor.constraint(equalToConstant: 60).isActive                                                      = true
-    }
-    
-    private func subtitleView(){
-        self.subtitle.translatesAutoresizingMaskIntoConstraints     = false
-        self.subtitle.backgroundColor                               = UIColor.black.withAlphaComponent(0.7)
-        self.subtitle.textColor                                     = UIColor.white
-        self.subtitle.layer.cornerRadius                            = 5
-        self.subtitle.textAlignment                                 = .center
-        self.subtitle.font                                          = UIFont(name: "Helvetica", size: 15)
-        self.subtitle.isHidden                                      = true
-        self.subtitle.numberOfLines                                 = 0
-        self.subtitle.clipsToBounds                                 = true
-        self.subtitle.lineBreakMode                                 = .byWordWrapping
-        
-        self.playerVC.view.addSubview(self.subtitle)
-        
-        self.subtitle.widthAnchor.constraint(lessThanOrEqualToConstant: 380).isActive                                   = true
-        self.subtitle.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive         = true
-        self.subtitle.heightAnchor.constraint(greaterThanOrEqualToConstant: 25).isActive                                = true
-        
-        self.subtitleBottomCons             = self.subtitle.bottomAnchor.constraint(equalTo: self.slider.topAnchor, constant: -25)
-        self.subtitleNotSliderBottomCons    = self.subtitle.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15)
-        
-        self.subtitleNotSliderBottomCons.isActive    = false
-        self.subtitleBottomCons.isActive             = true
-    }
-    
+
     @objc func playAndPauseBtnAction(){
             // vibration effect like netflix
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -340,16 +292,21 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.play()
     }
     
+    
     @objc func setSkipDuration(){
+        self.setDuration(duration: self.skipButtonDuration ?? 0)
+    }
+    
+    
+    private func setDuration(duration:Double){
         self.pause()
         
-        
-        let newCurrentTime: TimeInterval = Double(self.skipButtonDuration ?? 0)
+        let newCurrentTime: TimeInterval = duration
         let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
         
         self.slider.value                       = Float(seekToTime.seconds)
         self.slider.maximumValue                = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
-       
+        
         hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(newCurrentTime))) { hours, minutes, seconds in
             let hours   = getStringFrom(seconds: hours)
             let minutes = getStringFrom(seconds: minutes)
@@ -361,7 +318,9 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             }
         }
         
-        self.indexOfSubtitle(currentTime: Double(self.skipButtonDuration ?? 0))
+        self.subtitle.text   = ""
+        
+        self.indexOfSubtitle(currentTime: duration)
         self.playerVC.player?.seek(to: seekToTime)
         self.play()
         
@@ -373,6 +332,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         })
     }
     
+    
+
     @objc private func backButtonAction(){
         self.pause()
         player?.removeTimeObserver(observer ?? (Any).self)
@@ -384,6 +345,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         
     }
     
+    // Skip Button Animation Show Function
     private func skipBtnAnimationShow(){
         UIView.animate(withDuration: 0.5, delay: 0.15, options: [], animations: {
         self.skipBtn.alpha      = 0.6
@@ -392,6 +354,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         })
     }
     
+    // Skip Button Animation Hide Function
     private func skipBtnAnimationHide(){
         UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: {
             self.skipBtn.alpha      = 0
@@ -400,6 +363,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         })
     }
     
+    // Thumbnail View
     private func createThumbView(currentThumbImage:UIImage = UIImage(),currentTime:String){
         self.thumbView.backgroundColor                              = UIColor.black
         self.thumbView.alpha                                        = 1
@@ -439,7 +403,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         
     }
     
-    
+    // It's show first start state of video
     private func playState(){
         switch autoPlay {
         case .play:
@@ -451,13 +415,15 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.preriodicTimeObsever()
     }
     
-    
+    // Video Play Function
     func play(){
         self.playerVC.player?.play()
         self.playAndPauseBtn.setImage(imageNamed("pause-button"), for: .normal)
         self.autoPlay   = .pause
     }
     
+    
+    // Video Pause Function
     func pause(){
         self.playerVC.player?.pause()
         self.playAndPauseBtn.setImage(imageNamed("play-button"), for: .normal)
@@ -484,14 +450,10 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         }
     }
     
-    private func removeIndicatory(){
-        if let activityIndicatory = self.playerVC.view.viewWithTag(90) {
-            activityIndicatory.removeFromSuperview()
-        }
-    }
+
     
+    // Subitle Protocol
     public func subtitleList(list: [SubtitleModel]) {
-        print(list)
         self.subtitleList = list
     }
     
@@ -515,10 +477,10 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         }
     }
     
+    // It's show subtitle.
     private func showSubtitle(currentTime:Double){
         
-
-        
+        // beginning
         if self.subtitleList.count > 0  && self.subtitleCount < self.subtitleList.count {
             
             // Start Subtitle
@@ -543,6 +505,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             }
             
         }
+        // end
+        
     }
     
     func preriodicTimeObsever(){
@@ -577,8 +541,11 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                         self?.skipBtnAnimationShow()
                     }
                     
+                    //get current time
                     
+                    self?.getCurrentTime = time.seconds
                     
+                    // It's provide show total duration
                     hmsFrom(seconds: Int(totalDuration - CMTimeGetSeconds(time))){ hours, minutes, seconds in
                         let hours   = getStringFrom(seconds: hours)
                         let minutes = getStringFrom(seconds: minutes)
@@ -592,6 +559,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                     
                     
                     self?.delegate?.koustPlayerPlaybackstimer(NSString: timeString)
+                    
+                    // works when video ends
                     if Float(totalDuration) == Float(CMTimeGetSeconds(time)) {
                         self?.pause()
                         self?.delegate?.koustPlayerPlaybackDidEnd()
@@ -605,6 +574,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                             break
                         }
                     }
+                    
                     
                     // We hiding all views
                     if self?.animationDuration == ((self?.animationCount)! / 100) && (self?.isAnimationActive)! {
@@ -628,6 +598,84 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             
          
         }
+    }
+    
+}
+
+
+extension KoustPlayerView {
+    
+    // it's delete indicator
+    private func removeIndicatory(){
+        if let activityIndicatory = self.playerVC.view.viewWithTag(90) {
+            activityIndicatory.removeFromSuperview()
+        }
+    }
+    
+    
+}
+
+    // View Part
+extension KoustPlayerView {
+    private func topContainer(){
+        self.backButton.translatesAutoresizingMaskIntoConstraints       = false
+        self.backButton.setTitle("\(backButtonTitle)", for: .normal)
+        self.backButton.setImage(imageNamed("left-arrow"), for: .normal)
+        self.backButton.tintColor                                       = UIColor.white
+        
+        self.playerVC.view.addSubview(backButton)
+        
+        self.backButton.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
+        self.backButton.leftAnchor.constraint(equalTo: self.playerVC.view.leftAnchor, constant: 20).isActive            = true
+        self.backButton.topAnchor.constraint(equalTo: self.playerVC.view.topAnchor, constant: 15).isActive              = true
+        self.backButton.heightAnchor.constraint(equalToConstant: 30).isActive                                           = true
+    }
+    
+    
+    private func skiptBtnView(){
+        
+        self.skipBtn.translatesAutoresizingMaskIntoConstraints      = false
+        self.skipBtn.setTitle(skipButtonTitle, for: .normal)
+        self.skipBtn.backgroundColor                                = UIColor.black
+        self.skipBtn.alpha                                          = 0
+        self.skipBtn.tintColor                                      = UIColor.white
+        self.skipBtn.layer.borderColor                              = UIColor.white.cgColor
+        self.skipBtn.layer.borderWidth                              = 1
+        self.skipBtn.contentMode                                    = .center
+        self.skipBtn.layer.cornerRadius                             = 3
+        self.skipBtn.addTarget(self, action: #selector(setSkipDuration), for: .touchUpInside)
+        
+        
+        self.playerVC.view.addSubview(skipBtn)
+        
+        self.skipBtn.rightAnchor.constraint(equalTo: self.playerVC.view.rightAnchor, constant: -25).isActive                   = true
+        self.skipBtn.bottomAnchor.constraint(equalTo: self.remainingTime.topAnchor, constant: -30).isActive                    = true
+        self.skipBtn.widthAnchor.constraint(equalToConstant: 60).isActive                                                      = true
+    }
+    
+    private func subtitleView(){
+        self.subtitle.translatesAutoresizingMaskIntoConstraints     = false
+        self.subtitle.backgroundColor                               = UIColor.black.withAlphaComponent(0.7)
+        self.subtitle.textColor                                     = UIColor.white
+        self.subtitle.layer.cornerRadius                            = 5
+        self.subtitle.textAlignment                                 = .center
+        self.subtitle.font                                          = UIFont(name: "Helvetica", size: 15)
+        self.subtitle.isHidden                                      = true
+        self.subtitle.numberOfLines                                 = 0
+        self.subtitle.clipsToBounds                                 = true
+        self.subtitle.lineBreakMode                                 = .byWordWrapping
+        
+        self.playerVC.view.addSubview(self.subtitle)
+        
+        self.subtitle.widthAnchor.constraint(lessThanOrEqualToConstant: 380).isActive                                   = true
+        self.subtitle.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive         = true
+        self.subtitle.heightAnchor.constraint(greaterThanOrEqualToConstant: 25).isActive                                = true
+        
+        self.subtitleBottomCons             = self.subtitle.bottomAnchor.constraint(equalTo: self.slider.topAnchor, constant: -25)
+        self.subtitleNotSliderBottomCons    = self.subtitle.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15)
+        
+        self.subtitleNotSliderBottomCons.isActive    = false
+        self.subtitleBottomCons.isActive             = true
     }
     
 }
