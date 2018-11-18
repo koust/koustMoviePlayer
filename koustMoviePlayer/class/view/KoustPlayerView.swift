@@ -20,7 +20,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     public var backButtonTitle                = ""
     public var animationDuration              = 4
     public var rewindDuration                 = 10
-    public var skipButtonDuration:Double?
+    public var skipButtonDuration:Double!
     public var delegate:KoustPlayerDelegate?
     
     public var didEndState:koustMoviePlayerDidEndState                   = .manualClose
@@ -197,6 +197,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     }
     
     @objc private func rewindBtnAction(){
+        
         if getCurrentTime-Double(rewindDuration) < 0 {
             self.setDuration(duration:0)
         }else{
@@ -260,17 +261,18 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         }
         self.getThumbImage(sliderCurrentTime: Double(sender.value) ,handler: { image in
             DispatchQueue.main.async {
+                
+                self.createThumbView(currentTime: self.remainingTime.text!)
                 self.thumbImage.image = image
             }
         })
-        self.createThumbView(currentTime: self.remainingTime.text!)
  
     }
     
     @objc func sliderTouchUpInside(_ sender: UISlider){
         self.animationCount              =  0
         let newCurrentTime: TimeInterval = Double(sender.value)
-        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
+        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 100)
 
 
         
@@ -296,7 +298,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     @objc func sliderTouchUpOutside(_ sender:UISlider){
         let newCurrentTime: TimeInterval = Double(sender.value)
-        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
+        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 100)
         
         
         self.playerVC.player?.seek(to: seekToTime)
@@ -320,7 +322,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     
     @objc func setSkipDuration(){
-        self.setDuration(duration: self.skipButtonDuration ?? 0)
+        self.setDuration(duration: self.skipButtonDuration!)
     }
     
     
@@ -328,10 +330,14 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.pause()
         
         let newCurrentTime: TimeInterval = duration
-        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 600)
+        let seekToTime: CMTime           = CMTimeMakeWithSeconds(newCurrentTime, preferredTimescale: 100)
         
         self.slider.value                       = Float(seekToTime.seconds)
         self.slider.maximumValue                = Float(self.playerVC.player?.currentItem?.duration.seconds ?? 0)
+        
+        self.playerVC.player?.seek(to: seekToTime)
+        self.subtitle.text   = ""
+        self.indexOfSubtitle(currentTime: duration)
         
         hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(newCurrentTime))) { hours, minutes, seconds in
             let hours   = getStringFrom(seconds: hours)
@@ -342,12 +348,9 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             }else{
                 self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
             }
+            
         }
         
-        self.subtitle.text   = ""
-        
-        self.indexOfSubtitle(currentTime: duration)
-        self.playerVC.player?.seek(to: seekToTime)
         self.play()
         
         
@@ -470,48 +473,9 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         imageGenerator.generateCGImagesAsynchronously(forTimes: times) { _, image, _, _, _ in
             if image != nil {
                 handler(UIImage(cgImage: image!))
-//                handler(UIImage(cgImage: image!))
             }
         }
-        
-//        assetGenerator.appliesPreferredTrackTransform = true
-//
-//        let thumbTime: CMTime = asset.duration
-//        let times             = thumbTime as NSValue
-//
-//
-//
-//        assetGenerator.generateCGImagesAsynchronously(forTimes: [times], completionHandler: {( requestedTime, image, actualTime,result, error) -> Void in
-//
-//            switch result {
-//            case .succeeded: do {
-//                if let image = image {
-//                    print("Generated image for approximate time: \(time)")
-//
-//                    let img               = UIImage(cgImage: image)
-//                    self.thumbImage.image = img
-//                    //do something with `img`
-//                }
-//                else {
-//                    print("Failed to generate a valid image for time: \(time)")
-//                }
-//                }
-//
-//            case .failed: do {
-//                if let error = error {
-//                    print("Failed to generate image with Error: \(error) for time: \(time)")
-//                }
-//                else {
-//                    print("Failed to generate image for time: \(time)")
-//                }
-//                }
-//
-//            case .cancelled: do {
-//                print("Image generation cancelled for time: \(time)")
-//                }
-//            }
-        
-//        })
+ 
         
 
     }
@@ -579,8 +543,12 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     func preriodicTimeObsever(){
         
+        if observer != nil {
+            player?.removeTimeObserver(observer ?? (Any).self)
+            observer = nil
+        }
         
-        observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main) {
+        observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100), queue: DispatchQueue.main) {
             [weak self] time in
             
             
@@ -728,7 +696,7 @@ extension KoustPlayerView {
         self.subtitle.textColor                                     = UIColor.white
         self.subtitle.layer.cornerRadius                            = 5
         self.subtitle.textAlignment                                 = .center
-        self.subtitle.font                                          = UIFont(name: "Helvetica", size: 15)
+        self.subtitle.font                                          = UIFont(name: "AmericanTypewriter", size: 15)
         self.subtitle.isHidden                                      = true
         self.subtitle.numberOfLines                                 = 0
         self.subtitle.clipsToBounds                                 = true
