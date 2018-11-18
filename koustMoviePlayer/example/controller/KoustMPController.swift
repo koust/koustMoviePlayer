@@ -22,7 +22,7 @@ class KoustMPController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
-       koustMPC = KoustPlayerView()
+       koustMPC = KoustPlayerView(videoURL: URL(string: "http://mirrors.standaloneinstaller.com/video-sample/Panasonic_HDC_TM_700_P_50i.mp4")!)
         
     }
 
@@ -33,7 +33,6 @@ class KoustMPController: UIViewController {
         koustMPC.skipButtonDuration = 5
         koustMPC.skipButtonActive   = true
         koustMPC.backButtonTitle    = "Big Fish"
-        koustMPC.videoURL           = URL(string: "http://www.storiesinflight.com/js_videosub/jellies.mp4")!
         koustMPC.autoPlay           = .play
         koustMPC.presentAVPlayer()
     }

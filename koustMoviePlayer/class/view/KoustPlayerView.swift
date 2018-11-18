@@ -55,17 +55,38 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     private var subtitleCount     = 0
     private var animationCount    = 0
     private var isAnimationActive = true
-    private var asset:AVURLAsset?
-    private var generator:AVAssetImageGenerator?
+    private var asset:AVURLAsset!
+    
+    private var playerItem: AVPlayerItem!
+    private var assetGenerator:AVAssetImageGenerator!
+    private var playerLayer: AVPlayerLayer!
     private var getCurrentTime:Double   = 0
+    
+    public init(videoURL:URL){
+        super.init(nibName: nil, bundle: nil)
+        
+        self.videoURL   = videoURL
+        
+        asset       = AVURLAsset(url: videoURL)
+        playerItem  = AVPlayerItem(asset: asset)
+        player      = AVPlayer(playerItem: playerItem)
+        playerLayer = AVPlayerLayer(player: player)
+        
+        
+        assetGenerator = AVAssetImageGenerator(asset: asset)
+        assetGenerator.maximumSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: playerVC.view.frame.height/3 * UIScreen.main.scale)
+        
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     func presentAVPlayer(){
         player                                      = AVPlayer(url:videoURL)
         playerVC.player                             = player
         playerVC.showsPlaybackControls              = false
         asset                                       = AVURLAsset(url:videoURL)
-        generator                                   = AVAssetImageGenerator(asset: asset!)
-        generator?.appliesPreferredTrackTransform   = true
         
         
 
@@ -130,7 +151,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         
         self.rewindBtn.leftAnchor.constraint(equalTo: self.playAndPauseBtn.rightAnchor, constant:   35).isActive           = true
         self.rewindBtn.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15).isActive           = true
-        self.rewindBtn.widthAnchor.constraint(equalToConstant: 20).isActive                                                = true
+        self.rewindBtn.widthAnchor.constraint(equalToConstant: 25).isActive                                                = true
         self.rewindBtn.heightAnchor.constraint(equalToConstant: 25).isActive                                               = true
         
         
@@ -236,9 +257,14 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             }else{
                 self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
             }
-//            self.getThumbImage(seconds:Double(sender.value))
-            self.createThumbView(currentTime: self.remainingTime.text!)
         }
+        self.getThumbImage(sliderCurrentTime: Double(sender.value) ,handler: { image in
+            DispatchQueue.main.async {
+                self.thumbImage.image = image
+            }
+        })
+        self.createThumbView(currentTime: self.remainingTime.text!)
+ 
     }
     
     @objc func sliderTouchUpInside(_ sender: UISlider){
@@ -373,7 +399,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.thumbView.translatesAutoresizingMaskIntoConstraints    = false
         
         self.thumbView.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive    = true
-        self.thumbView.centerYAnchor.constraint(equalTo: self.playerVC.view.centerYAnchor, constant: 0).isActive    = true
+        self.thumbView.centerYAnchor.constraint(equalTo: self.playerVC.view.centerYAnchor, constant: 20).isActive   = true
         self.thumbView.widthAnchor.constraint(equalToConstant: self.playerVC.view.frame.width / 3).isActive         = true
         self.thumbView.heightAnchor.constraint(equalToConstant: self.playerVC.view.frame.height / 3).isActive       = true
         
@@ -430,25 +456,67 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.autoPlay   = .play
     }
     
-    private func getThumbImage(seconds:Double)  {
-        let timestamp = CMTime(seconds: seconds, preferredTimescale: 200)
-        DispatchQueue.global(qos: .userInteractive).async {
-            do {
-                if let imageRef = try? self.generator?.copyCGImage(at: timestamp, actualTime: nil) {
-                    
-                    DispatchQueue.main.async {
-                
-                        self.thumbImage.image = UIImage(cgImage: imageRef!)
-                    }
-                } else {
-                    
-                    DispatchQueue.main.async {
-                    //return nil
-                    }
-                }
+    private func getThumbImage(sliderCurrentTime:Double,handler:@escaping ((UIImage)->Void))  {
+        
+        guard let player = player ,
+            let asset = player.currentItem?.asset else {
+                return
+        }
+        
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true
+        let times = [NSValue(time: CMTime(seconds: sliderCurrentTime, preferredTimescale: 100))]
+        
+        imageGenerator.generateCGImagesAsynchronously(forTimes: times) { _, image, _, _, _ in
+            if image != nil {
+                handler(UIImage(cgImage: image!))
+//                handler(UIImage(cgImage: image!))
             }
         }
+        
+//        assetGenerator.appliesPreferredTrackTransform = true
+//
+//        let thumbTime: CMTime = asset.duration
+//        let times             = thumbTime as NSValue
+//
+//
+//
+//        assetGenerator.generateCGImagesAsynchronously(forTimes: [times], completionHandler: {( requestedTime, image, actualTime,result, error) -> Void in
+//
+//            switch result {
+//            case .succeeded: do {
+//                if let image = image {
+//                    print("Generated image for approximate time: \(time)")
+//
+//                    let img               = UIImage(cgImage: image)
+//                    self.thumbImage.image = img
+//                    //do something with `img`
+//                }
+//                else {
+//                    print("Failed to generate a valid image for time: \(time)")
+//                }
+//                }
+//
+//            case .failed: do {
+//                if let error = error {
+//                    print("Failed to generate image with Error: \(error) for time: \(time)")
+//                }
+//                else {
+//                    print("Failed to generate image for time: \(time)")
+//                }
+//                }
+//
+//            case .cancelled: do {
+//                print("Image generation cancelled for time: \(time)")
+//                }
+//            }
+        
+//        })
+        
+
     }
+        
+    
     
 
     
@@ -514,6 +582,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         
         observer = player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main) {
             [weak self] time in
+            
             
             // Activity Indicator part
             let playbackLikelyToKeepUp = self?.playerVC.player?.currentItem?.isPlaybackLikelyToKeepUp
