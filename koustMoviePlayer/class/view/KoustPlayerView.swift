@@ -44,6 +44,10 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     private var thumbCurrent    = UILabel()
     private var backButton      = UIButton()
     private var subtitle        = UILabel()
+
+    
+    private var subtitleBottomCons:NSLayoutConstraint!
+    private var subtitleNotSliderBottomCons:NSLayoutConstraint!
     
     
     private var subtitleList:[SubtitleModel] = []
@@ -175,6 +179,9 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
     
     private func allViewShow(){
         let alphaValue:CGFloat          =  1
+        self.subtitleNotSliderBottomCons.isActive    = false
+        self.subtitleBottomCons.isActive             = true
+        
         UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
             self.slider.alpha           = alphaValue
             self.remainingTime.alpha    = alphaValue
@@ -182,6 +189,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             self.rewindBtn.alpha        = alphaValue
             self.backButton.alpha       = alphaValue
         }, completion: { _ in
+            self.isAnimationActive          = true
         })
     }
     
@@ -230,13 +238,20 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         self.subtitle.font                                          = UIFont(name: "Helvetica", size: 15)
         self.subtitle.isHidden                                      = true
         self.subtitle.numberOfLines                                 = 0
+        self.subtitle.clipsToBounds                                 = true
         self.subtitle.lineBreakMode                                 = .byWordWrapping
         
         self.playerVC.view.addSubview(self.subtitle)
         
+        self.subtitle.widthAnchor.constraint(lessThanOrEqualToConstant: 380).isActive                                   = true
         self.subtitle.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive         = true
-        self.subtitle.bottomAnchor.constraint(equalTo: self.slider.topAnchor, constant: -25).isActive                   = true
         self.subtitle.heightAnchor.constraint(greaterThanOrEqualToConstant: 25).isActive                                = true
+        
+        self.subtitleBottomCons             = self.subtitle.bottomAnchor.constraint(equalTo: self.slider.topAnchor, constant: -25)
+        self.subtitleNotSliderBottomCons    = self.subtitle.bottomAnchor.constraint(equalTo: self.playerVC.view.bottomAnchor, constant: -15)
+        
+        self.subtitleNotSliderBottomCons.isActive    = false
+        self.subtitleBottomCons.isActive             = true
     }
     
     @objc func playAndPauseBtnAction(){
@@ -269,7 +284,7 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             }else{
                 self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
             }
-            self.getThumbImage(seconds:Double(sender.value))
+//            self.getThumbImage(seconds:Double(sender.value))
             self.createThumbView(currentTime: self.remainingTime.text!)
         }
     }
@@ -395,8 +410,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         
         self.thumbView.centerXAnchor.constraint(equalTo: self.playerVC.view.centerXAnchor, constant: 0).isActive    = true
         self.thumbView.centerYAnchor.constraint(equalTo: self.playerVC.view.centerYAnchor, constant: 0).isActive    = true
-        self.thumbView.widthAnchor.constraint(equalToConstant: self.playerVC.view.frame.width / 2).isActive         = true
-        self.thumbView.heightAnchor.constraint(equalToConstant: self.playerVC.view.frame.height / 2).isActive       = true
+        self.thumbView.widthAnchor.constraint(equalToConstant: self.playerVC.view.frame.width / 3).isActive         = true
+        self.thumbView.heightAnchor.constraint(equalToConstant: self.playerVC.view.frame.height / 3).isActive       = true
         
         self.thumbCurrent.translatesAutoresizingMaskIntoConstraints = false
         
@@ -506,10 +521,9 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
         
         if self.subtitleList.count > 0  && self.subtitleCount < self.subtitleList.count {
             
+            // Start Subtitle
             if subtitleState == .starToTime {
                 if (self.subtitleList[self.subtitleCount].startToTime ?? 0) <= currentTime {
-                    print(self.subtitleList[self.subtitleCount].text)
-
                     self.subtitle.text                          = self.subtitleList[self.subtitleCount].text
                     self.subtitle.isHidden                      = false
                     self.subtitleState                          = .endToTime
@@ -517,19 +531,13 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
             }
             
             
+            // End Subtitle
             if subtitleState == .endToTime {
                 if (self.subtitleList[self.subtitleCount].endToTime ?? 0) <= currentTime {
-                    
-                    self.subtitle.text                          = ""
                     self.subtitle.isHidden                      = true
-                    print("silindi")
-                    
                     if self.subtitleCount < self.subtitleList.count {
-                        print(subtitleCount)
                         self.subtitleState   = .starToTime
                         self.subtitleCount += 1
-                        
-                        print(subtitleCount)
                     }
                 }
             }
@@ -600,6 +608,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                     
                     // We hiding all views
                     if self?.animationDuration == ((self?.animationCount)! / 100) && (self?.isAnimationActive)! {
+                        self?.subtitleNotSliderBottomCons.isActive    = true
+                        self?.subtitleBottomCons.isActive             = false
                         UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
                             self?.slider.alpha           = 0
                             self?.remainingTime.alpha    = 0
@@ -607,6 +617,8 @@ open class KoustPlayerView: UIViewController,KoustSubtitleDelegate {
                             self?.rewindBtn.alpha        = 0
                             self?.backButton.alpha       = 0
                         }, completion: { _ in
+                            
+                            self?.isAnimationActive                       = false
                         })
                     }
                     

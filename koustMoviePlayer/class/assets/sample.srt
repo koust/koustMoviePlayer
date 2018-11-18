@@ -1,6 +1,6 @@
 1
 00:00:00,970 --> 00:00:03,000
-Jellyfish at the Monterey Aquarium
+Jellyfish at the Monterey Aquarium Jellyfish at the Monterey Aquarium Jellyfish at the Monterey Aquarium Jellyfish at the Monterey Aquarium
 
 2
 00:00:04,080 --> 00:00:06,080
@@ -20,4 +20,4 @@ Pro Tip: Turn off the camera flash!
 
 5
 00:00:33,000 --> 00:00:41,000
-Thanks for watching and I hope you'll have fun with the VideoSub library!
+Thanks for watching and I hope you'll have fun with the KoustMoviePlayer library!

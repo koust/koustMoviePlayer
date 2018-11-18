@@ -83,7 +83,6 @@ public class KoustSubTitleController {
     private func readingStrFile(subtitleURL:URL){
         do {
             let string = try! String(contentsOf: subtitleURL, encoding: .utf8)
-            // Prepare payload
             let payload = self.payLoad(text: string)
             
             let pattern = "(\\d+)\\n([\\d:,.]+)\\s+-{2}\\>\\s+([\\d:,.]+)\\n([\\s\\S]*?(?=\\n{2,}|$))"
@@ -97,7 +96,6 @@ public class KoustSubTitleController {
                     var match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.count))
 
                     
-                    // Get "from" & "to" time
                     regex = try NSRegularExpression(pattern: "\\d{1,2}:\\d{1,2}:\\d{1,2}[,.]\\d{1,3}", options: .caseInsensitive)
                     match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.count))
                     
@@ -111,7 +109,6 @@ public class KoustSubTitleController {
                     let fromStr = (group as NSString).substring(with: from.range)
                     let toStr   = (group as NSString).substring(with: to.range)
                     
-                    // Get text & check if empty
                     let range = NSMakeRange(0, to.range.location + to.range.length + 1)
                     guard (group as NSString).length - range.length > 0 else {
                         continue

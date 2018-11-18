@@ -32,7 +32,7 @@ class KoustMPController: UIViewController {
         // Skipbuttonduration should be double value.
         koustMPC.skipButtonDuration =  7
         koustMPC.skipButtonActive   = true
-        koustMPC.backButtonTitle    = "Çizgi Film Sahnesi"
+        koustMPC.backButtonTitle    = "Big Fish"
         koustMPC.videoURLS.append(URL(string: "http://www.storiesinflight.com/js_videosub/jellies.mp4")!)
         koustMPC.autoPlay           = .play
         koustMPC.presentAVPlayer()
