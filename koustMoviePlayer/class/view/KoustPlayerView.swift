@@ -509,7 +509,7 @@ public class KoustPlayerView: KoustMoviewPlayerController,KoustSubtitleDelegate 
     
     private func indexOfSubtitle(currentTime:Double){
         
-        _ = self.subtitleList.enumerated().map{ (index,subModel) in
+        let indexSB = self.subtitleList.enumerated().map{ (index,subModel) in
         
         if (self.subtitleList.first?.startToTime ?? 0) > currentTime {
             self.subtitleCount = 0
