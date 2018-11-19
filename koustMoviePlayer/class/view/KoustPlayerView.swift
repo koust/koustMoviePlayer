@@ -259,18 +259,17 @@ public class KoustPlayerView: KoustMoviewPlayerController,KoustSubtitleDelegate 
         }
         
         
-        hmsFrom(seconds: (Int(player?.currentItem!.duration.seconds ?? 0) - Int(seconds))) { hours, minutes, seconds in
+        hmsFrom(seconds: (Int(seconds))) { hours, minutes, seconds in
             
             let hours   = getStringFrom(seconds: hours)
             let minutes = getStringFrom(seconds: minutes)
             let seconds = getStringFrom(seconds: seconds)
             if hours == "00"{
-                self.remainingTime.text = "\(minutes):\(seconds)"
+                self.thumbCurrent.text   = "\(minutes):\(seconds)"
             }else{
-                self.remainingTime.text = "\(hours):\(minutes):\(seconds)"
+                self.thumbCurrent.text  = "\(hours):\(minutes):\(seconds)"
             }
         }
-        self.thumbCurrent.text          =   self.remainingTime.text
         
         self.getThumbImage(sliderCurrentTime: Double(sender.value) ,handler: { image in
             DispatchQueue.main.async {
