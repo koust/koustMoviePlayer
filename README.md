@@ -1,3 +1,7 @@
+![iOS 10.0+](https://img.shields.io/badge/iOS-10.0%2B-blue.svg)
+![Swift 4.0+](https://img.shields.io/badge/Swift-4.0%2B-orange.svg)
+![CocoaPods](https://img.shields.io/cocoapods/v/AFNetworking.svg)
+
 # KoustMoviePlayer
 
 KoustMoviePlayer is a custom player for iOS. It's similar to Netflix Player and Almost , available all features. 
@@ -7,12 +11,27 @@ KoustMoviePlayer is a custom player for iOS. It's similar to Netflix Player and 
 
 [![KoustMoviePlayer](https://i.ytimg.com/vi/3ivGqio0b4w/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLAMM7zcScwhh5-N29OQHod-D8mpEQ)](https://youtu.be/3ivGqio0b4w "KoustMoviePlayer Youtube")
 
+## Requirements
+
+- iOS 10.0+
+- Xcode 10.0
+- Swift 4+
+
 ## Features
   - Skip Button (used to skip the trailer)
   - Rewind Button (used to rewind. If you want can be set time.)
   - Subtitle
   - Thumbnail Animation
+  
+  
+## CocoaPods
+   You can use [CocoaPods](http://cocoapods.org/) to install `koustMoviePlayer` by adding it to your `Podfile`:
 
+   ```ruby
+    platform :ios, '10.0'
+    use_frameworks!
+    pod 'koustMoviePlayer'
+   ```
 
 ## Manually
   1. Download and drop ```class``` path in your project.  
