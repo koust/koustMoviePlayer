@@ -82,7 +82,7 @@ public class KoustPlayerView: KoustMoviewPlayerController,KoustSubtitleDelegate 
         fatalError("init(coder:) has not been implemented")
     }
     
-    func presentAVPlayer(){
+    public func presentAVPlayer(){
         player                                      = AVPlayer(url:videoURL)
         playerVC.player                             = player
         playerVC.showsPlaybackControls              = false
@@ -509,7 +509,7 @@ public class KoustPlayerView: KoustMoviewPlayerController,KoustSubtitleDelegate 
     
     private func indexOfSubtitle(currentTime:Double){
         
-        let indexSB = self.subtitleList.enumerated().map{ (index,subModel) in
+        let _ = self.subtitleList.enumerated().map{ (index,subModel) in
         
         if (self.subtitleList.first?.startToTime ?? 0) > currentTime {
             self.subtitleCount = 0
