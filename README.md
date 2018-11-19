@@ -4,7 +4,7 @@
 
 # KoustMoviePlayer
 
-KoustMoviePlayer is a custom player for iOS. It's similar to Netflix Player and Almost , available all features. 
+KoustMoviePlayer is a custom player for iOS. It's similar to Netflix's Player and it is almost available with its all features.
 
 
 ## Preview [Movie]
@@ -18,8 +18,8 @@ KoustMoviePlayer is a custom player for iOS. It's similar to Netflix Player and 
 - Swift 4+
 
 ## Features
-  - Skip Button (used to skip the trailer)
-  - Rewind Button (used to rewind. If you want can be set time.)
+  - Skip Button (used for skip the any specific time that want to jump)
+  - Rewind Button (used for rewind. If you want you can also set time.) 
   - Subtitle
   - Thumbnail Animation
   
