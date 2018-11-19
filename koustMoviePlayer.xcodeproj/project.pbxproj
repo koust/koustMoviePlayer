@@ -15,6 +15,7 @@
 		5BE1989D219B6CA000049D3C /* KoustSubTitleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE1989C219B6CA000049D3C /* KoustSubTitleController.swift */; };
 		5BE1989F219F777E00049D3C /* KoustMPSubtitleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE1989E219F777E00049D3C /* KoustMPSubtitleState.swift */; };
 		5BE198A321A1A24400049D3C /* rewind-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BE198A221A1A24400049D3C /* rewind-button.png */; };
+		5BE198A521A3434D00049D3C /* koustMoviePlayer.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 5BE198A421A3434D00049D3C /* koustMoviePlayer.podspec */; };
 		FA570E552192CA2B0059708F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E542192CA2B0059708F /* AppDelegate.swift */; };
 		FA570E572192CA2B0059708F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA570E562192CA2B0059708F /* ViewController.swift */; };
 		FA570E5A2192CA2B0059708F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA570E582192CA2B0059708F /* Main.storyboard */; };
@@ -58,6 +59,7 @@
 		5BE1989C219B6CA000049D3C /* KoustSubTitleController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustSubTitleController.swift; sourceTree = "<group>"; };
 		5BE1989E219F777E00049D3C /* KoustMPSubtitleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustMPSubtitleState.swift; sourceTree = "<group>"; };
 		5BE198A221A1A24400049D3C /* rewind-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "rewind-button.png"; path = "../../../../../../Desktop/rewind-button.png"; sourceTree = "<group>"; };
+		5BE198A421A3434D00049D3C /* koustMoviePlayer.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = koustMoviePlayer.podspec; sourceTree = "<group>"; };
 		FA570E512192CA2B0059708F /* koustMoviePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = koustMoviePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA570E542192CA2B0059708F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA570E562192CA2B0059708F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 		FA570E532192CA2B0059708F /* koustMoviePlayer */ = {
 			isa = PBXGroup;
 			children = (
+				5BE198A421A3434D00049D3C /* koustMoviePlayer.podspec */,
 				FA570E872192D2820059708F /* assets */,
 				FA570E832192CA780059708F /* example */,
 				FA570E822192CA6E0059708F /* class */,
@@ -373,6 +376,7 @@
 				FAA6FC3121945D3400B11E48 /* pause-button.png in Resources */,
 				5BE198A321A1A24400049D3C /* rewind-button.png in Resources */,
 				FA570E5A2192CA2B0059708F /* Main.storyboard in Resources */,
+				5BE198A521A3434D00049D3C /* koustMoviePlayer.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
