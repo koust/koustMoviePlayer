@@ -20,6 +20,7 @@ public class KoustPlayerView: KoustMoviewPlayerController,KoustSubtitleDelegate 
     public var backButtonTitle                = ""
     public var animationDuration              = 4
     public var rewindDuration                 = 10
+    public var subtitleResourceName           = ""
     public var skipButtonDuration:Double!
     public var delegate:KoustPlayerDelegate?
     
@@ -87,10 +88,11 @@ public class KoustPlayerView: KoustMoviewPlayerController,KoustSubtitleDelegate 
         playerVC.showsPlaybackControls              = false
         asset                                       = AVURLAsset(url:videoURL)
         
-        
-        let subTitle        = KoustSubTitleController(delegate: self)
-        subTitle.setSubtitle(forResource: "sample")
-//        subTitle.setSubtitleLink(srtUrl: "http://mmoplay2.org/Narcos.Mexico.S01E01.srt")
+        if subtitleResourceName != "" {
+            let subTitle        = KoustSubTitleController(delegate: self)
+            subTitle.setSubtitle(forResource: subtitleResourceName)
+            //        subTitle.setSubtitleLink(srtUrl: "http://mmoplay2.org/Narcos.Mexico.S01E01.srt")
+        }
         
         DispatchQueue.main.async(execute: {
             UIApplication.topViewController()?.present(self.playerVC, animated: true){

@@ -11,7 +11,7 @@ import UIKit
 class KoustMPController: UIViewController {
 
     
-        var koustMPC:KoustPlayerView!
+    var koustMPC:KoustPlayerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,10 +30,11 @@ class KoustMPController: UIViewController {
     @IBAction func playAction(_ sender: Any) {
         
         // Skipbuttonduration should be double value.
-        koustMPC.skipButtonDuration = 5
-        koustMPC.skipButtonActive   = true
-        koustMPC.backButtonTitle    = "Cartoon Movie | For Kids +4"
-        koustMPC.autoPlay           = .play
+        koustMPC.subtitleResourceName = "sample"
+        koustMPC.skipButtonDuration   = 5
+        koustMPC.skipButtonActive     = true
+        koustMPC.backButtonTitle      = "Cartoon Movie | For Kids +4"
+        koustMPC.autoPlay             = .play
         koustMPC.presentAVPlayer()
     }
     
