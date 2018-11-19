@@ -59,7 +59,7 @@
 		5BE1989C219B6CA000049D3C /* KoustSubTitleController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustSubTitleController.swift; sourceTree = "<group>"; };
 		5BE1989E219F777E00049D3C /* KoustMPSubtitleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoustMPSubtitleState.swift; sourceTree = "<group>"; };
 		5BE198A221A1A24400049D3C /* rewind-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "rewind-button.png"; path = "../../../../../../Desktop/rewind-button.png"; sourceTree = "<group>"; };
-		5BE198A421A3434D00049D3C /* koustMoviePlayer.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = koustMoviePlayer.podspec; sourceTree = "<group>"; };
+		5BE198A421A3434D00049D3C /* koustMoviePlayer.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = koustMoviePlayer.podspec; path = ../koustMoviePlayer.podspec; sourceTree = "<group>"; };
 		FA570E512192CA2B0059708F /* koustMoviePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = koustMoviePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA570E542192CA2B0059708F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA570E562192CA2B0059708F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
