@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "koustMoviePlayer"
-s.version      = "1.0"
+s.version      = "1.0.1"
 s.summary      = "koustMoviePlayer is similar netflix player. Almost , available all features on koustMoviePlayer"
 s.license      = { :type => 'MIT License', :file => 'LICENSE' }
 s.homepage     = "https://github.com/koust/koustMoviePlayer"
